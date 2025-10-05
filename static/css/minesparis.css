@@ -1,0 +1,197 @@
+/* charte graphique mines paris 
+   contact: Basile Marchand (basile.marchand@minesparis.psl.eu)
+*/
+
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
+:root {
+  --blue: #005e9e;
+  --grey: #9c9e9f;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+}
+
+h1,
+h2,
+h3 {
+  font-family: "Roboto", sans-serif;
+  color: var(--blue);
+}
+
+h1 {
+  font-weight: 500;
+}
+
+.remark-slide-content > h1 {
+  font-size: 30pt;
+  margin-bottom: 0.5rem;
+}
+
+.remark-slide-content > h2 {
+  font-size: 22px;
+}
+
+.remark-slide-content.middle.center > h1 {
+  font-size: 50pt;
+  margin-bottom: 0.5rem;
+}
+
+.remark-slide-content.middle.center > h2 {
+  font-size: 40px;
+}
+
+.slide_title.remark-slide-content > h1 {
+  font-size: 48pt;
+}
+
+.slide_title.remark-slide-content > h2 {
+  font-size: 45px;
+}
+
+h2,
+h3 {
+  font-weight: lighter;
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+h1 {
+  margin-top: 0%;
+  margin-bottom: 1%;
+}
+
+.slide_title {
+  text-align: center;
+}
+
+div.slide_footer {
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  height: 2.5%;
+  width: 100%;
+  z-index: 10;
+  padding: 1.5%;
+  transform: translate(-50%, 0%);
+  text-align: center;
+}
+
+.wrap {
+  width: 50%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+div.slide_footer span {
+  font-size: 10pt;
+  vertical-align: middle;
+  float: left;
+  color: var(--grey);
+}
+
+.footnote {
+  position: absolute;
+  bottom: 10%;
+  font-size: small;
+  font-style: italic;
+}
+
+.footnote span {
+  font-style: italic;
+}
+
+div.references {
+  position: absolute;
+  bottom: 5%;
+  left: 5%;
+  z-index: 10;
+  padding: 1.5%;
+  width: 85%;
+  font-size: xx-small;
+  font-style: italic;
+}
+
+/* SLIDE TITLE LOGO */
+
+img.left_panel {
+  position: absolute;
+  top: 5vmin;
+  left: 5vmin;
+  height: 90%;
+}
+
+img.main_logo {
+  position: absolute;
+  top: 20%;
+  left: 70%;
+  width: 10%;
+  transform: translate(-50%, -50%);
+}
+
+/* SLIDE HEADER/FOOTER LOGO */
+
+img.slide_header_mpt {
+  position: absolute;
+  bottom: 3%;
+  left: 8%;
+  height: 5%;
+}
+
+img.slide_header_cnrs {
+  position: absolute;
+  top: 5%;
+  left: 92%;
+  height: 5%;
+}
+
+li  {
+  padding-top: 0.3em;
+  padding-bottom: 0.3em;
+}
+
+.satory {
+  position: absolute;
+  width: 50%;
+  top: -5em;
+  left: 30%;
+}
+
+.satory.img {
+  width: 100%;
+}
+
+.blue_rectangle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 30%;
+  background-color: var(--blue);
+  opacity: 1;
+}
+
+.slide-decoration {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 380px;
+  height: 280px;
+  background: #1b9aaa;
+  opacity: 0.15;
+  clip-path: polygon(
+    21% 100%,
+    32% 94%,
+    46% 89%,
+    61% 86%,
+    71% 85%,
+    82% 83%,
+    92% 69%,
+    100% 62%,
+    100% 100%
+  );
+  z-index: 0;
+  pointer-events: none;
+}
