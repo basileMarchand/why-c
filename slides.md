@@ -54,8 +54,6 @@ layout: true
 
 ---
 
----
-
 # Le `C` en quelques mots
 
 .cols[
@@ -236,8 +234,14 @@ GIT : le gestionnaire de version, que vous adorez tous !écrit intégralement en
 <iframe src="https://giphy.com/embed/okFG5aJWqRGMYXoKTD" width="280" height="280" style="" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
 </div>
 
-<div style="position: absolute; top:50%; left:75%; opacity: 0.2">
+<div style="position: absolute; top:15%; left:31%; opacity: 0.2">
 <iframe src="https://giphy.com/embed/GghGKaZ8JeHJx0apQC" width="280" height="280" style="" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+</div>
+
+<div style="position: absolute; top: 50%; left: 75%">
+<iframe width="200" height="215"
+src="https://www.youtube.com/embed/p7mS1sE1Ovo?autoplay=1&mute=1">
+</iframe>
 </div>
 
 ---
