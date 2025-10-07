@@ -3,12 +3,12 @@ pre {
 }
 
 .remark-code {
-  font-family: "monospace";
+  /* font-family: "monospace"; */
   font-size: 14px;
 }
 
 .remark-inline-code {
-  font-family: "monospace";
+  /* /* font-family: "monospace"; */
   background-color: rgba(135, 131, 120, 0.15);
   border-radius: 3px;
   padding: 0.1em 0.4em;
@@ -18,7 +18,7 @@ pre {
 .remark-code {
   padding: 1em !important;
   border-radius: 10px;
-  background-color: #9c9e9f !important;
+  /* background-color: #9c9e9f !important; */
   word-wrap: break-word;
 }
 

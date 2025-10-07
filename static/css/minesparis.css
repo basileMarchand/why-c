@@ -195,3 +195,64 @@ li  {
   z-index: 0;
   pointer-events: none;
 }
+
+/* Conteneur global des décorations */
+.slide-decor {
+  position: fixed;
+  inset: 0;
+  pointer-events: none; /* pas d’interaction */
+  overflow: hidden;
+}
+
+/* Forme du bas gauche */
+.slide-decor::before {
+  content: "";
+  position: absolute;
+  bottom: -80px;
+  left: -80px;
+  width: 400px;
+  height: 300px;
+  background: linear-gradient(
+    135deg,
+    rgba(27, 154, 170, 0.25),
+    rgba(27, 154, 170, 0.05)
+  );
+  clip-path: path("M0,220 Q200,0 400,200 L400,300 L0,300 Z");
+  filter: blur(10px);
+}
+
+/* Forme en haut à droite */
+.slide-decor::after {
+  content: "";
+  position: absolute;
+  top: -120px;
+  right: -120px;
+  width: 420px;
+  height: 320px;
+  background: linear-gradient(
+    45deg,
+    rgba(27, 154, 170, 0.2),
+    rgba(255, 255, 255, 0.1)
+  );
+  clip-path: path("M0,60 Q210,260 420,60 L420,0 L0,0 Z");
+  filter: blur(10px);
+  transform: rotate(5deg);
+}
+
+@keyframes waveShift {
+  0%,
+  100% {
+    transform: translateY(0) rotate(8deg);
+  }
+  50% {
+    transform: translateY(10px) rotate(10deg);
+  }
+}
+
+.slide-decor::after {
+  animation: waveShift 8s ease-in-out infinite;
+}
+
+.slide-decor::before {
+  animation: waveShift 6s ease-in-out infinite;
+}

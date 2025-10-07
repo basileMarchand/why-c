@@ -2,11 +2,15 @@ class: middle, slide_title
 
 <img class="main_logo" src="static/media/logo_c.png">
 
+<div class="slide-decor"></div>
+
 # UE12 </br> Apprentissage de la programmation
 
 ## Programmation en `C` ️
 
-<div style="position: absolute; bottom: 2%; left: 35%">
+<br><br><br><br><br><br>
+
+<div style="position: absolute; bottom: 2%; left: 50%; transform: translate(-50%, 0%) scale(0.8);">
 <div class="profile-card">
   <div class="banner"></div>
   <img class="avatar" src="static/media/linkedin/profil.jpeg" alt="Photo de profil">
@@ -45,6 +49,8 @@ layout: true
   <span>@basilemarchand</span>
 </a>
 </div>
+
+<div class="slide-decor"></div>
 
 ---
 
@@ -129,11 +135,18 @@ Le C est au coeurs de nombreux projets d'envergure dans plein de domaines
 Le noyau Linux est historiquement intégralement écrit en C. Un petit peu de Rust commence à apparaitre maintenant.
 ]
 </div>
+<div style="position: absolute; left: 20%; top: 25%;">
+<iframe src="https://giphy.com/embed/xndHaRIcvge5y" width="80" height="70" style="" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+</div>
 
 <div style="position: absolute; left: 50%; top: 20%; width: 50%; transform: rotate(10deg)">
 .question[
 GIT : le gestionnaire de version, que vous adorez tous !écrit intégralement en C, accéssoirement par le même individu que le noyau Linux initial.
 ]
+</div>
+
+<div style="position: absolute; left: 75%; top: 20%">
+<iframe src="https://giphy.com/embed/kH6CqYiquZawmU1HI6" width="80" height="40" style="" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
 </div>
 
 <div style="position: absolute; left: 20%; top: 45%; width: 45%; transform: rotate(-4deg)">
@@ -142,16 +155,23 @@ GIT : le gestionnaire de version, que vous adorez tous !écrit intégralement en
 ]
 </div>
 
-<div style="position: absolute; left: 55%; top: 55%; width: 45%; transform: rotate(4deg)">
+<div style="position: absolute; left: 55%; top: 55%; width: 45%; transform: rotate(4deg); z-index: 10">
 .question[
     Le jeu vidéo DOOM historique (1993), le firmware de la Game Boy 
 ]
+</div>
+<div style="position: absolute; left: 75%; top: 75%; ">
+<iframe src="https://giphy.com/embed/94Y7qY5RWUhGg" width="90" height="30" style="" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
 </div>
 
 <div style="position: absolute; left: 5%; top: 65%; width: 45%; transform: rotate(4deg)">
 .question[
     Nginx, OpenSSL, PostreSQL, ... Beaucoup d'éléments du Web sont écrit en `C`. 
 ]
+</div>
+
+<div style="position: absolute; left: 50%; top: 75%;">
+<iframe src="https://giphy.com/embed/ftAyb0CG1FNAIZt4SO" width="280" height="169" style="" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
 </div>
 
 ---
@@ -212,11 +232,17 @@ GIT : le gestionnaire de version, que vous adorez tous !écrit intégralement en
 
 ]
 
+<div style="position: absolute; top: 53%; left: 31%;opacity: 0.2">
+<iframe src="https://giphy.com/embed/okFG5aJWqRGMYXoKTD" width="280" height="280" style="" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+</div>
+
+<div style="position: absolute; top:50%; left:75%; opacity: 0.2">
+<iframe src="https://giphy.com/embed/GghGKaZ8JeHJx0apQC" width="280" height="280" style="" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+</div>
+
 ---
 
 class: center, middle
-
-<div class="slide-decoration"></div>
 
 🧱 Le C, c’est le langage qui a bâti l’informatique moderne.
 <br><br><br>
