@@ -52,8 +52,6 @@ layout: true
 
 ---
 
----
-
 # La genèse du `C`
 
 .cols[
@@ -85,8 +83,15 @@ Cela donna naissance en 1972 au langage `C`, qui devint rapidement populaire pou
 
 # Le C en 4 caractéristiques
 
+<br><br><br><br>
 .center[
-Bas niveau, impératif, typé statiquement, compilé
+**Bas niveau**
+
+**impératif** 
+
+**typé statiquement**
+
+**compilé**
 ]
 
 ---
@@ -295,7 +300,7 @@ Sans aucune option de compilation ce code compile parfaitement sans aucune warni
 ]
 .fifty[
 
-.small[
+.smaller[
 
 ```bash
 $ gcc -Wall -Wextra -Wpedantic -fanalyzer test.c
@@ -404,8 +409,19 @@ En `C` il n'y a pas une convention de nommage de variables, contrairement à Pyt
 ---
 
 # Les Types
+## Les nombres 
 
 Le `C` met à disposition un certain nombre de type de _base_. C'est type sont des types numériques il s'agit de
+
+🧮 Les types numériques se divisent en deux grandes catégories :
+
+| Famille       | Exemples                         | Nature                                       |
+| ------------- | -------------------------------- | -------------------------------------------- |
+| **Entiers**   | `int`, `short`, `long`, `char`   | Valeurs **exactes**, sans partie décimale    |
+| **Flottants** | `float`, `double`, `long double` | Valeurs **approchées**, avec partie décimale |
+
+💡 En C, chaque type correspond à une taille en mémoire (nombre de bits), et donc à une plage de valeurs possible.
+
 
 ---
 
@@ -413,17 +429,97 @@ Le `C` met à disposition un certain nombre de type de _base_. C'est type sont d
 
 ## Quelques mots sur les entiers
 
+| Type        | Taille typique           | Exemple de valeur                  | Commentaire                         |
+| ----------- | ------------------------ | ---------------------------------- | ----------------------------------- |
+| `char`      | 1 octet                  | `'A'`, `97`                        | Souvent utilisé pour les caractères |
+| `short`     | 2 octets                 | `-32768` à `32767`                 | Petit entier                        |
+| `int`       | 4 octets                 | `-2,147,483,648` à `2,147,483,647` | Type entier standard                |
+| `long`      | 4 ou 8 octets            | selon système                      | Entier long                         |
+| `long long` | ≥ 8 octets               | jusqu’à 9 223 372 036 854 775 807  | Très grand entier                   |
+
+⚠️ La taille dépend du compilateur et de l’architecture (32 ou 64 bits). Il existe un moyen de garantir la taille des entiers `#include <stdint.h>`
+
+---
+
+# Les types 
+
+## Entiers de taille fixe 
+
+```c
+#include <stdint.h>
+```
+
+| Type       | Taille garantie | Signé | Exemple de valeur               |
+| ---------- | --------------- | ----- | ------------------------------- |
+| `int8_t`   | 8 bits          | oui   | −128 → +127                     |
+| `uint8_t`  | 8 bits          | non   | 0 → 255                         |
+| `int16_t`  | 16 bits         | oui   | −32768 → +32767                 |
+| `int32_t`  | 32 bits         | oui   | −2 147 483 648 → +2 147 483 647 |
+| `uint32_t` | 32 bits         | non   | 0 → 4 294 967 295               |
+| `int64_t`  | 64 bits         | oui   | valeurs très grandes            |
+| `uint64_t` | 64 bits         | non   | valeurs très grandes            |
+
+
 ---
 
 # Les types
 
 ## Quelques mots sur les flottants
 
+| Type          | Taille typique | Précision                        | Exemple                |
+| ------------- | -------------- | -------------------------------- | ---------------------- |
+| `float`       | 4 octets       | ~7 chiffres                      | `3.141593f`            |
+| `double`      | 8 octets       | ~15 chiffres                     | `3.141592653589793`    |
+| `long double` | 16 octets      | ~18 chiffres (selon compilateur) | `3.141592653589793238` |
+
+Les flottants sont codés selon la norme IEEE 754 :
+
+| Élément      | Rôle                   |
+| ------------ | ---------------------- |
+| **Signe**    | positif/négatif        |
+| **Exposant** | ordre de grandeur      |
+| **Mantisse** | chiffres significatifs |
+
+**Exemple :** `float x = 12.5;`
+→ stocké en binaire comme (-1)^s × 1.mantisse × 2^(exposant-127)
+
 ---
 
 # Les types
 
 ## Utilisation des suffix
+
+Quand tu écris une valeur numérique dans ton code C, le compilateur lui attribue un type par défaut : `int` pour les entiers, `double` pour les réels. 
+
+.cols[
+  .sixty[
+
+| Suffixe    | Type résultant       | Exemple |
+| ---------- | -------------------- | ------- |
+| *(aucun)*  | `int`                | `42`    |
+| `U` ou `u` | `unsigned int`       | `42U`   |
+| `L` ou `l` | `long int`           | `42L`   |
+| `UL`, `LU` | `unsigned long int`  | `42UL`  |
+| `LL`       | `long long int`      | `42LL`  |
+| `ULL`      | `unsigned long long` | `42ULL` |
+
+
+  ]
+  .fourty[
+| Suffixe    | Type          | Exemple |
+| ---------- | ------------- | ------- |
+| *(aucun)*  | `double`      | `3.14`  |
+| `f` ou `F` | `float`       | `3.14f` |
+| `l` ou `L` | `long double` | `3.14L` |
+
+  ]
+]
+
+⚠️ À retenir
+- ✅ Toujours suffixer les valeurs quand tu veux contrôler le type exact.
+- ✅ Indispensable pour les grandes constantes ou les calculs précis.
+- ✅ Bon réflexe pour éviter les warnings de conversion implicite.
+
 
 ---
 
@@ -520,6 +616,48 @@ double x=static_cast(double, a);
 # Les types
 
 ## Un mot sur les char
+
+En C, le type char sert à représenter un caractère unique, mais c’est avant tout… un entier sur 1 octet (8 bits) !
+
+Pourquoi un entier sur 8 bits = un charactère. C'est lié à la table ASCII _(American Standard Code for Information Interchange)_
+
+.cols[
+  .fifty[
+| Caractère      | Code ASCII décimal | Code binaire |
+| -------------- | ------------------ | ------------ |
+| `'A'`          | 65                 | `01000001`   |
+| `'B'`          | 66                 | `01000010`   |
+| `'a'`          | 97                 | `01100001`   |
+| `'0'`          | 48                 | `00110000`   |
+| `' '` (espace) | 32                 | `00100000`   |
+
+  ]
+  .fifty[
+    | Type            | Taille  | Commentaire                                                                   |
+| --------------- | ------- | ----------------------------------------------------------------------------- |
+| `char`          | 1 octet | signé ou non selon le compilateur                                             |
+| `signed char`   | 1 octet | valeurs négatives possibles                                                   |
+| `unsigned char` | 1 octet | toujours positif, utile pour stocker des octets bruts (ex: fichiers binaires) |
+
+  ]
+]
+
+--
+
+.cols[
+  .fifty[
+Un char reste un nombre, on peut donc faire des opérations :
+  ]
+  .fifty[
+
+```c
+printf("%c\n", 'A' + 1); // affiche 'B'
+```
+
+  ]
+]
+
+
 
 ---
 
@@ -909,6 +1047,43 @@ On peut même se passer d'un ou plusieurs éléments entre parenthèses du `for`
 
 Comme en Python, il existe les deux mots clés `break` et `continue` qui permettent de modifier l'exécution d'une boucle `for` ou `while`.
 
+.cols[
+  .fourty[
+`break` — sortir de la boucle
+  
+```c
+for (int i = 0; i < 10; i++) {
+    if (i == 5)
+        break;
+    printf("%d ", i);
+}
+```
+
+```bash
+$ ./a.out 
+0 1 2 3 4
+```
+  
+  ]
+  .sixty[
+`continue` — passer à l’itération suivante
+
+```c
+for (int i = 0; i < 10; i++) {
+    if (i == 5)
+        continue;
+    printf("%d ", i);
+}
+```
+
+```bash
+$ ./a.out 
+0 1 2 3 4 6 7 8 9
+```
+
+  ]
+]
+
 ---
 
 class: middle
@@ -922,6 +1097,285 @@ class: middle
 ---
 
 # Les fonctions
+
+
+évidemment en `C` comme dans beaucoup d'autre langage on peut définir des fonctions, i.e. des blocs d'instructions réutilisables sans faire de copy/paste 
+
+💡 Le but des fonctions est multiple  :
+
+- éviter de répéter du code,
+
+- rendre le programme plus lisible,
+
+- mieux structurer le raisonnement.
+
+
+---
+
+# Les fonctions 
+## Définition 
+
+Une fonction en C suit cette forme générale pour sa définition : 
+
+```c
+type_retour nom_fonction(type1 arg1, type2 arg2, ... ){
+  // bloc 
+  // d'instruction 
+  return valeur; 
+}
+```
+
+Avec la contrainte que `valeur` forcément une varible de type `type_retour`. 
+
+.cols[
+  .fourty[
+Par exemple, pour définir une fonction qui ferait la somme de deux entiers 
+  ]
+  .sixty[
+
+```c
+int addition(int a, int b) {
+  int c = a + b; 
+  return c;
+}
+```
+  ]
+]
+
+
+---
+
+# Les fonctions 
+## Utilisation
+
+Pour utiliser une fonction, on l’appelle depuis main() ou une autre fonction.
+
+.cols[
+  .fifty[
+
+```c
+#include <stdio.h>
+
+int addition(int a, int b) {
+    return a + b;
+}
+
+int main() {
+    int x = 3, y = 5;
+    int s = addition(x, y);
+    printf("Somme = %d\n", s);
+    return 0;
+}
+```
+  ]
+  .fifty[
+
+```bash 
+$ ./a.out 
+Somme = 8
+``` 
+
+**Attention** pour pouvoir utiliser `addition` il faut que le compilateur sache avant l'appel que la fonction existe. 
+
+  ]
+]
+
+.cols[
+  .fifty[
+📦 Fonction ≠ Procédure
+Si elle ne renvoie rien → type void
+  ]
+  .fifty[
+```c
+void affiche_message() {
+    printf("Bonjour !\n");
+}
+```
+  ]
+]
+
+---
+
+# Les fonctions 
+## Notion de prototype 
+
+Avant d’utiliser une fonction, le compilateur doit connaître sa signature, i.e. le type de sortie ainsi que le nombre d'arguments et les types associés.  
+
+.cols[
+  .fifty[
+On peut définir le prototype d'une fonction avant de spécifier son implémentation. C'est ce que l'on décompose comme étant la **déclaration** d'une fonction vs la **définition**. 
+  
+C'est ce mécanisme qui va nous permettre par la suite de **décomposer** nos programmes en **plusieurs fichiers**. 
+  ]
+  .fifty[
+```c
+// Prototype (déclaration)
+*int addition(int a, int b);
+
+int main() {
+    int r = addition(3, 4);
+    printf("%d\n", r);
+    return 0;
+}
+
+// Définition
+int addition(int a, int b) {
+    return a + b;
+}
+```
+  ]
+]
+
+---
+
+# Pour finir 
+## Un mot sur les IO 
+
+Le `C` dispose nativement de deux fonctions permettant de faire des entrées/sorties et donc d'avoir une interaction avec l'utilisateur. Pour la sortie vous l'avez déjà vu c'est `printf` et son alter ego est `scanf`.
+ 
+```c
+#include <stdio.h>
+``` 
+
+Ces deux fonctions reposent sur la notion de formatage. Les caractères de formatage sont les suivants (liste non exhaustive) 
+
+| Format | Type affiché             | Exemple                  |
+| ------ | ------------------------ | ------------------------ |
+| `%d`   | entier (`int`)           | `printf("%d", 42);`      |
+| `%f`   | réel (`float`, `double`) | `printf("%f", 3.14);`    |
+| `%c`   | caractère (`char`)       | `printf("%c", 'A');`     |
+| `%s`   | chaîne de caractères     | `printf("%s", "Hello");` |
+
+
+---
+
+# Pour finir 
+## Un mot de plus sur `scanf`
+
+.cols[
+  .fifty[
+`scanf` permet de lire une valeur tapée par l’utilisateur dans le terminal. 
+
+⚠️ Le symbole `&` est obligatoire, il indique l’adresse mémoire où stocker la valeur saisie.
+  ]
+  .fifty[
+
+```c 
+scanf("formats", &variables);
+```
+  ]
+]
+
+Par exemple à l'usage cela donne : 
+```c
+#include <stdio.h>
+
+int main() {
+    int age;
+    printf("Quel âge as-tu ? ");
+    scanf("%d", &age);
+    printf("Tu as %d ans.\n", age);
+    return 0;
+}
+```
+
+---
+
+class: middle, center
+
+# Des questions ? 
+
+---
+
+# Mise en oeuvre 
+
+## Facile 
+
+.cols[
+  .fifty[
+    **Convertisseur Celsius ↔ Fahrenheit**
+
+Entrer une température en Celsius et afficher l’équivalent en Fahrenheit.
+
+$$𝐹=𝐶×95+32$$
+💡 Variante : proposer un menu texte pour choisir le sens de la conversion.
+  ]
+  .fifty[
+
+    **Évaluer une expression simple**
+
+Lire deux entiers et afficher la somme, la différence, le produit et le quotient.
+
+💡 Variante : forcer le type float pour la division.
+💡 Variante : permettre à l'utilisateur de choisir s'il veut des opérations entières ou flottantes.
+  ]
+]
+
+---
+
+# Mise en oeuvre 
+
+## Facile 2
+
+.cols[.fifty[
+
+**Table de multiplication**
+
+Afficher la table de multiplication d’un nombre donné.
+
+💡 Variante : afficher toutes les tables de 1 à 10 avec deux boucles imbriquées.
+
+
+
+**Somme des n premiers entiers**
+
+Lire n et calculer la somme des entiers de 1 à n.
+
+💡 Variante : comparer la somme obtenue à la formule 
+**𝑛(𝑛+1)/2**
+]
+.fifty[
+**Nombre mystère**
+
+Générer un nombre entre 1 et 100 (fixe pour le moment, ex. 42) et demander à l’utilisateur de deviner, avec des indications “trop grand / trop petit”.
+
+💡 Variante : ajouter un compteur d’essais.
+]]
+
+---
+
+# Mise en oeuvre 
+
+## Un tout petit peu moins simple 
+
+**Convertisseur binaire**
+
+Entrer un entier positif et afficher sa représentation binaire (sans tableau : imprimer les bits à l’envers, ou utiliser une boucle while(n > 0) avec division par 2).
+
+**Triangle de caractères**
+.cols[
+.sixty[
+Lire un entier n et afficher un triangle de `x`
+
+💡 Variante : triangle isocèle 
+
+] 
+.fourty[
+```
+x
+xx
+xxx
+xxxx
+``` 
+] 
+]
+
+
+**Approximation de π**
+
+Implémenter une fonction `float approx_pi(int n)` qui calcule
+
+$$π≈4×(1−1/3+1/5−1/7+…)$$
 
 ---
 
@@ -991,48 +1445,3 @@ class: middle
 
 ---
 
-class: center, middle
-
-🧱 Le C, c’est le langage qui a bâti l’informatique moderne.
-<br><br><br>
-
-⚡ Si Python, JavaScript et compagnie sont des voitures de course… le C, c’est le moteur.
-<br><br><br>
-
-🌌 Tous les grands projets du calcul scientifique, de la simulation au spatial, s’appuient sur lui.
-<br><br><br>
-
-🔍 Apprendre le C, c’est comprendre comment tout fonctionne — vraiment.
-<br><br><br>
-
-```
-
-```
-
-```
-
-```
-
-```
-
-```
-
-```
-
-```
-
-```
-
-```
-
-```
-
-```
-
-```
-
-```
-
-```
-
-```

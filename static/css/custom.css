@@ -83,6 +83,10 @@ pre {
   box-shadow: none;
 }
 
+.smaller .remark-code {
+  font-size: 12px;
+}
+
 iframe {
   border-width: 0;
 }
@@ -104,10 +108,12 @@ p.legend {
     -webkit-transform: scale(1.1);
     transform: rotate(18deg) scale(1.1);
   }
+
   50% {
     -webkit-transform: scale(0.8);
     transform: rotate(20deg) scale(0.8);
   }
+
   100% {
     -webkit-transform: scale(1);
     transform: rotate(22deg) scale(1);
@@ -116,9 +122,9 @@ p.legend {
 
 .def {
   background-color: rgba(196, 81, 0, 0.5);
-  padding: 1em;
+  padding: 0.1em 1em 0.1em 1em;
   border-radius: 12px;
-  margin: 2em 1em;
+  /* margin: 2em 1em; */
 }
 
 .target {
@@ -141,12 +147,17 @@ p.legend {
 }
 
 figcaption {
-  font-family: "Arial", sans-serif; /* Choix de police moderne */
-  font-size: 0.8em; /* Taille de texte un peu plus grande pour la lisibilité */
+  font-family: "Arial", sans-serif;
+  /* Choix de police moderne */
+  font-size: 0.8em;
+  /* Taille de texte un peu plus grande pour la lisibilité */
   font-style: italic;
-  color: #555; /* Couleur de texte douce */
-  text-align: center; /* Centrer le texte */
-  margin-top: 10px; /* Espace entre l'iframe et le texte */
+  color: #555;
+  /* Couleur de texte douce */
+  text-align: center;
+  /* Centrer le texte */
+  margin-top: 10px;
+  /* Espace entre l'iframe et le texte */
 
   /* Effet d'ombre légère */
   text-shadow: 5px 1px 5px rgba(0, 0, 0, 0.1);
@@ -174,7 +185,7 @@ figcaption {
   font-family: fantasy;
 } */
 
-div.remark-code-line > hljs-comment::before {
+div.remark-code-line>hljs-comment::before {
   content: "";
 }
 
@@ -192,10 +203,12 @@ div.remark-code-line > hljs-comment::before {
   font-size: 0.6rem;
   transition: background 0.2s ease;
 }
+
 .linkedin-badge:hover {
   background: #1b9aaa;
   color: #fff;
 }
+
 .linkedin-badge img {
   width: 14px;
   height: 14px;
@@ -294,4 +307,18 @@ div.remark-code-line > hljs-comment::before {
   width: 16px;
   height: 16px;
   fill: currentColor;
+}
+
+
+table {
+  border: 1px solid #1b9aaa;
+}
+
+th {
+  border-bottom: 1px solid #1b9aaa;
+  border-collapse: collapse;
+}
+
+.cols table {
+  font-size: 18px;
 }
