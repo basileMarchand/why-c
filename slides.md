@@ -87,7 +87,7 @@ Cela donna naissance en 1972 au langage `C`, qui devint rapidement populaire pou
 .center[
 **Bas niveau**
 
-**impératif** 
+**impératif**
 
 **typé statiquement**
 
@@ -409,7 +409,8 @@ En `C` il n'y a pas une convention de nommage de variables, contrairement à Pyt
 ---
 
 # Les Types
-## Les nombres 
+
+## Les nombres
 
 Le `C` met à disposition un certain nombre de type de _base_. C'est type sont des types numériques il s'agit de
 
@@ -422,28 +423,27 @@ Le `C` met à disposition un certain nombre de type de _base_. C'est type sont d
 
 💡 En C, chaque type correspond à une taille en mémoire (nombre de bits), et donc à une plage de valeurs possible.
 
-
 ---
 
 # Les types
 
 ## Quelques mots sur les entiers
 
-| Type        | Taille typique           | Exemple de valeur                  | Commentaire                         |
-| ----------- | ------------------------ | ---------------------------------- | ----------------------------------- |
-| `char`      | 1 octet                  | `'A'`, `97`                        | Souvent utilisé pour les caractères |
-| `short`     | 2 octets                 | `-32768` à `32767`                 | Petit entier                        |
-| `int`       | 4 octets                 | `-2,147,483,648` à `2,147,483,647` | Type entier standard                |
-| `long`      | 4 ou 8 octets            | selon système                      | Entier long                         |
-| `long long` | ≥ 8 octets               | jusqu’à 9 223 372 036 854 775 807  | Très grand entier                   |
+| Type        | Taille typique | Exemple de valeur                  | Commentaire                         |
+| ----------- | -------------- | ---------------------------------- | ----------------------------------- |
+| `char`      | 1 octet        | `'A'`, `97`                        | Souvent utilisé pour les caractères |
+| `short`     | 2 octets       | `-32768` à `32767`                 | Petit entier                        |
+| `int`       | 4 octets       | `-2,147,483,648` à `2,147,483,647` | Type entier standard                |
+| `long`      | 4 ou 8 octets  | selon système                      | Entier long                         |
+| `long long` | ≥ 8 octets     | jusqu’à 9 223 372 036 854 775 807  | Très grand entier                   |
 
 ⚠️ La taille dépend du compilateur et de l’architecture (32 ou 64 bits). Il existe un moyen de garantir la taille des entiers `#include <stdint.h>`
 
 ---
 
-# Les types 
+# Les types
 
-## Entiers de taille fixe 
+## Entiers de taille fixe
 
 ```c
 #include <stdint.h>
@@ -458,7 +458,6 @@ Le `C` met à disposition un certain nombre de type de _base_. C'est type sont d
 | `uint32_t` | 32 bits         | non   | 0 → 4 294 967 295               |
 | `int64_t`  | 64 bits         | oui   | valeurs très grandes            |
 | `uint64_t` | 64 bits         | non   | valeurs très grandes            |
-
 
 ---
 
@@ -489,37 +488,36 @@ Les flottants sont codés selon la norme IEEE 754 :
 
 ## Utilisation des suffix
 
-Quand tu écris une valeur numérique dans ton code C, le compilateur lui attribue un type par défaut : `int` pour les entiers, `double` pour les réels. 
+Quand tu écris une valeur numérique dans ton code C, le compilateur lui attribue un type par défaut : `int` pour les entiers, `double` pour les réels.
 
 .cols[
-  .sixty[
+.sixty[
 
 | Suffixe    | Type résultant       | Exemple |
 | ---------- | -------------------- | ------- |
-| *(aucun)*  | `int`                | `42`    |
+| _(aucun)_  | `int`                | `42`    |
 | `U` ou `u` | `unsigned int`       | `42U`   |
 | `L` ou `l` | `long int`           | `42L`   |
 | `UL`, `LU` | `unsigned long int`  | `42UL`  |
 | `LL`       | `long long int`      | `42LL`  |
 | `ULL`      | `unsigned long long` | `42ULL` |
 
-
-  ]
-  .fourty[
-| Suffixe    | Type          | Exemple |
+]
+.fourty[
+| Suffixe | Type | Exemple |
 | ---------- | ------------- | ------- |
-| *(aucun)*  | `double`      | `3.14`  |
-| `f` ou `F` | `float`       | `3.14f` |
+| _(aucun)_ | `double` | `3.14` |
+| `f` ou `F` | `float` | `3.14f` |
 | `l` ou `L` | `long double` | `3.14L` |
 
-  ]
+]
 ]
 
 ⚠️ À retenir
+
 - ✅ Toujours suffixer les valeurs quand tu veux contrôler le type exact.
 - ✅ Indispensable pour les grandes constantes ou les calculs précis.
 - ✅ Bon réflexe pour éviter les warnings de conversion implicite.
-
 
 ---
 
@@ -622,42 +620,40 @@ En C, le type char sert à représenter un caractère unique, mais c’est avant
 Pourquoi un entier sur 8 bits = un charactère. C'est lié à la table ASCII _(American Standard Code for Information Interchange)_
 
 .cols[
-  .fifty[
-| Caractère      | Code ASCII décimal | Code binaire |
+.fifty[
+| Caractère | Code ASCII décimal | Code binaire |
 | -------------- | ------------------ | ------------ |
-| `'A'`          | 65                 | `01000001`   |
-| `'B'`          | 66                 | `01000010`   |
-| `'a'`          | 97                 | `01100001`   |
-| `'0'`          | 48                 | `00110000`   |
-| `' '` (espace) | 32                 | `00100000`   |
+| `'A'` | 65 | `01000001` |
+| `'B'` | 66 | `01000010` |
+| `'a'` | 97 | `01100001` |
+| `'0'` | 48 | `00110000` |
+| `' '` (espace) | 32 | `00100000` |
 
-  ]
-  .fifty[
-    | Type            | Taille  | Commentaire                                                                   |
+]
+.fifty[
+| Type | Taille | Commentaire |
 | --------------- | ------- | ----------------------------------------------------------------------------- |
-| `char`          | 1 octet | signé ou non selon le compilateur                                             |
-| `signed char`   | 1 octet | valeurs négatives possibles                                                   |
+| `char` | 1 octet | signé ou non selon le compilateur |
+| `signed char` | 1 octet | valeurs négatives possibles |
 | `unsigned char` | 1 octet | toujours positif, utile pour stocker des octets bruts (ex: fichiers binaires) |
 
-  ]
+]
 ]
 
 --
 
 .cols[
-  .fifty[
+.fifty[
 Un char reste un nombre, on peut donc faire des opérations :
-  ]
-  .fifty[
+]
+.fifty[
 
 ```c
 printf("%c\n", 'A' + 1); // affiche 'B'
 ```
 
-  ]
 ]
-
-
+]
 
 ---
 
@@ -1048,9 +1044,9 @@ On peut même se passer d'un ou plusieurs éléments entre parenthèses du `for`
 Comme en Python, il existe les deux mots clés `break` et `continue` qui permettent de modifier l'exécution d'une boucle `for` ou `while`.
 
 .cols[
-  .fourty[
+.fourty[
 `break` — sortir de la boucle
-  
+
 ```c
 for (int i = 0; i < 10; i++) {
     if (i == 5)
@@ -1060,12 +1056,12 @@ for (int i = 0; i < 10; i++) {
 ```
 
 ```bash
-$ ./a.out 
+$ ./a.out
 0 1 2 3 4
 ```
-  
-  ]
-  .sixty[
+
+]
+.sixty[
 `continue` — passer à l’itération suivante
 
 ```c
@@ -1077,11 +1073,11 @@ for (int i = 0; i < 10; i++) {
 ```
 
 ```bash
-$ ./a.out 
+$ ./a.out
 0 1 2 3 4 6 7 8 9
 ```
 
-  ]
+]
 ]
 
 ---
@@ -1098,10 +1094,9 @@ class: middle
 
 # Les fonctions
 
+évidemment en `C` comme dans beaucoup d'autre langage on peut définir des fonctions, i.e. des blocs d'instructions réutilisables sans faire de copy/paste
 
-évidemment en `C` comme dans beaucoup d'autre langage on peut définir des fonctions, i.e. des blocs d'instructions réutilisables sans faire de copy/paste 
-
-💡 Le but des fonctions est multiple  :
+💡 Le but des fonctions est multiple :
 
 - éviter de répéter du code,
 
@@ -1109,49 +1104,50 @@ class: middle
 
 - mieux structurer le raisonnement.
 
-
 ---
 
-# Les fonctions 
-## Définition 
+# Les fonctions
 
-Une fonction en C suit cette forme générale pour sa définition : 
+## Définition
+
+Une fonction en C suit cette forme générale pour sa définition :
 
 ```c
 type_retour nom_fonction(type1 arg1, type2 arg2, ... ){
-  // bloc 
-  // d'instruction 
-  return valeur; 
+  // bloc
+  // d'instruction
+  return valeur;
 }
 ```
 
-Avec la contrainte que `valeur` forcément une varible de type `type_retour`. 
+Avec la contrainte que `valeur` forcément une varible de type `type_retour`.
 
 .cols[
-  .fourty[
-Par exemple, pour définir une fonction qui ferait la somme de deux entiers 
-  ]
-  .sixty[
+.fourty[
+Par exemple, pour définir une fonction qui ferait la somme de deux entiers
+]
+.sixty[
 
 ```c
 int addition(int a, int b) {
-  int c = a + b; 
+  int c = a + b;
   return c;
 }
 ```
-  ]
-]
 
+]
+]
 
 ---
 
-# Les fonctions 
+# Les fonctions
+
 ## Utilisation
 
 Pour utiliser une fonction, on l’appelle depuis main() ou une autre fonction.
 
 .cols[
-  .fifty[
+.fifty[
 
 ```c
 #include <stdio.h>
@@ -1167,47 +1163,52 @@ int main() {
     return 0;
 }
 ```
-  ]
-  .fifty[
 
-```bash 
-$ ./a.out 
+]
+.fifty[
+
+```bash
+$ ./a.out
 Somme = 8
-``` 
+```
 
-**Attention** pour pouvoir utiliser `addition` il faut que le compilateur sache avant l'appel que la fonction existe. 
+**Attention** pour pouvoir utiliser `addition` il faut que le compilateur sache avant l'appel que la fonction existe.
 
-  ]
+]
 ]
 
 .cols[
-  .fifty[
+.fifty[
 📦 Fonction ≠ Procédure
 Si elle ne renvoie rien → type void
-  ]
-  .fifty[
+]
+.fifty[
+
 ```c
 void affiche_message() {
     printf("Bonjour !\n");
 }
 ```
-  ]
+
+]
 ]
 
 ---
 
-# Les fonctions 
-## Notion de prototype 
+# Les fonctions
 
-Avant d’utiliser une fonction, le compilateur doit connaître sa signature, i.e. le type de sortie ainsi que le nombre d'arguments et les types associés.  
+## Notion de prototype
+
+Avant d’utiliser une fonction, le compilateur doit connaître sa signature, i.e. le type de sortie ainsi que le nombre d'arguments et les types associés.
 
 .cols[
-  .fifty[
-On peut définir le prototype d'une fonction avant de spécifier son implémentation. C'est ce que l'on décompose comme étant la **déclaration** d'une fonction vs la **définition**. 
-  
-C'est ce mécanisme qui va nous permettre par la suite de **décomposer** nos programmes en **plusieurs fichiers**. 
-  ]
-  .fifty[
+.fifty[
+On peut définir le prototype d'une fonction avant de spécifier son implémentation. C'est ce que l'on décompose comme étant la **déclaration** d'une fonction vs la **définition**.
+
+C'est ce mécanisme qui va nous permettre par la suite de **décomposer** nos programmes en **plusieurs fichiers**.
+]
+.fifty[
+
 ```c
 // Prototype (déclaration)
 *int addition(int a, int b);
@@ -1223,21 +1224,23 @@ int addition(int a, int b) {
     return a + b;
 }
 ```
-  ]
+
+]
 ]
 
 ---
 
-# Pour finir 
-## Un mot sur les IO 
+# Pour finir
+
+## Un mot sur les IO
 
 Le `C` dispose nativement de deux fonctions permettant de faire des entrées/sorties et donc d'avoir une interaction avec l'utilisateur. Pour la sortie vous l'avez déjà vu c'est `printf` et son alter ego est `scanf`.
- 
+
 ```c
 #include <stdio.h>
-``` 
+```
 
-Ces deux fonctions reposent sur la notion de formatage. Les caractères de formatage sont les suivants (liste non exhaustive) 
+Ces deux fonctions reposent sur la notion de formatage. Les caractères de formatage sont les suivants (liste non exhaustive)
 
 | Format | Type affiché             | Exemple                  |
 | ------ | ------------------------ | ------------------------ |
@@ -1246,27 +1249,29 @@ Ces deux fonctions reposent sur la notion de formatage. Les caractères de forma
 | `%c`   | caractère (`char`)       | `printf("%c", 'A');`     |
 | `%s`   | chaîne de caractères     | `printf("%s", "Hello");` |
 
-
 ---
 
-# Pour finir 
+# Pour finir
+
 ## Un mot de plus sur `scanf`
 
 .cols[
-  .fifty[
-`scanf` permet de lire une valeur tapée par l’utilisateur dans le terminal. 
+.fifty[
+`scanf` permet de lire une valeur tapée par l’utilisateur dans le terminal.
 
 ⚠️ Le symbole `&` est obligatoire, il indique l’adresse mémoire où stocker la valeur saisie.
-  ]
-  .fifty[
+]
+.fifty[
 
-```c 
+```c
 scanf("formats", &variables);
 ```
-  ]
+
+]
 ]
 
-Par exemple à l'usage cela donne : 
+Par exemple à l'usage cela donne :
+
 ```c
 #include <stdio.h>
 
@@ -1283,24 +1288,24 @@ int main() {
 
 class: middle, center
 
-# Des questions ? 
+# Des questions ?
 
 ---
 
-# Mise en oeuvre 
+# Mise en oeuvre
 
-## Facile 
+## Facile
 
 .cols[
-  .fifty[
-    **Convertisseur Celsius ↔ Fahrenheit**
+.fifty[
+**Convertisseur Celsius ↔ Fahrenheit**
 
 Entrer une température en Celsius et afficher l’équivalent en Fahrenheit.
 
 $$𝐹=𝐶×95+32$$
 💡 Variante : proposer un menu texte pour choisir le sens de la conversion.
-  ]
-  .fifty[
+]
+.fifty[
 
     **Évaluer une expression simple**
 
@@ -1308,12 +1313,12 @@ Lire deux entiers et afficher la somme, la différence, le produit et le quotien
 
 💡 Variante : forcer le type float pour la division.
 💡 Variante : permettre à l'utilisateur de choisir s'il veut des opérations entières ou flottantes.
-  ]
+]
 ]
 
 ---
 
-# Mise en oeuvre 
+# Mise en oeuvre
 
 ## Facile 2
 
@@ -1325,13 +1330,11 @@ Afficher la table de multiplication d’un nombre donné.
 
 💡 Variante : afficher toutes les tables de 1 à 10 avec deux boucles imbriquées.
 
-
-
 **Somme des n premiers entiers**
 
 Lire n et calculer la somme des entiers de 1 à n.
 
-💡 Variante : comparer la somme obtenue à la formule 
+💡 Variante : comparer la somme obtenue à la formule
 **𝑛(𝑛+1)/2**
 ]
 .fifty[
@@ -1344,9 +1347,9 @@ Générer un nombre entre 1 et 100 (fixe pour le moment, ex. 42) et demander à 
 
 ---
 
-# Mise en oeuvre 
+# Mise en oeuvre
 
-## Un tout petit peu moins simple 
+## Un tout petit peu moins simple
 
 **Convertisseur binaire**
 
@@ -1357,25 +1360,523 @@ Entrer un entier positif et afficher sa représentation binaire (sans tableau : 
 .sixty[
 Lire un entier n et afficher un triangle de `x`
 
-💡 Variante : triangle isocèle 
+💡 Variante : triangle isocèle
 
-] 
+]
 .fourty[
+
 ```
 x
 xx
 xxx
 xxxx
-``` 
-] 
-]
+```
 
+]
+]
 
 **Approximation de π**
 
 Implémenter une fonction `float approx_pi(int n)` qui calcule
 
 $$π≈4×(1−1/3+1/5−1/7+…)$$
+
+---
+
+class: center, middle
+
+# Séance 2
+
+## Types dérivés, coding style et clean code
+
+---
+
+# Les types dérivés
+
+En `C` on dispose des types de base qu'on a déjà vu précédemment, mais aussi de types dit "dérivés".
+
+Ces types dérivés sont :
+
+- Les tableaux
+- Les chaînes de caractères
+- Les structures
+- Les pointeurs
+
+Ces types dérivés, vous allez le voir rapidement, ne sont que des **variantes/combinaisons** des types de base. Ils sont néanmoins très importants car ils permettent de manipuler des données plus complexes.
+
+---
+
+# Les pointeurs
+
+## Notion d'adresse mémoire
+
+En `C`, chaque variable est stockée à une adresse mémoire spécifique. Un pointeur est une variable qui **contient l'adresse mémoire** d'une autre variable. Un pointeur est défini en utilisant le symbole `*` lors de la déclaration.
+
+```c
+type *nom_pointeur;
+```
+
+où `type` est le type de la variable pointée.
+
+```c
+int a = 42;          // Variable entière
+int *p = &a;        // Pointeur vers un entier, initialisé à l'adresse de a
+printf("Valeur de a: %d\n", *p); // Affiche 42
+```
+
+⚠️ Le symbole `&` est l'opérateur "adresse de", qui récupère l'adresse mémoire d'une variable.
+Le symbole `*` est l'opérateur de "déréférencement", qui accède à la valeur stockée à l'adresse pointée par le pointeur
+
+---
+
+# Les pointeurs
+
+## Initialisation et utilisation
+
+Un pointeur doit être initialisé avant d'être utilisé. Il peut être initialisé à l'adresse d'une variable existante ou à `NULL` (indiquant qu'il ne pointe vers rien). Depuis C23, on peut utiliser le mot-clé `nullptr` pour représenter un pointeur nul.
+
+.cols[
+.fifty[
+
+```c
+int a = 10;
+int *p = &a;
+printf("Valeur de a via p: %d\n", *p);
+```
+
+]
+.fifty[
+
+```c
+int *p = nullptr; // ou int *p = NULL;
+if (p != nullptr) {
+    // Utilisation de p
+} else {
+    printf("Pointeur nul\n");
+}
+```
+
+]
+]
+
+**Rêgles** : toujours vérifier qu'un pointeur n'est pas nul avant de le déréférencer.
+
+---
+
+# Les pointeurs
+
+## Mais à quoi ça sert ?
+
+Les pointeurs sont utilisés pour :
+
+- Manipuler des tableaux et des chaînes de caractères.
+- Passer des arguments par référence aux fonctions (permet de modifier la variable d'origine).
+- Créer des structures de données complexes (listes chaînées, arbres, etc.).
+- Gérer la mémoire dynamique (allocation et libération de mémoire).
+
+Aujourd'hui, on va se concentrer sur les deux premiers points. Les deux derniers ce sera pour la séance suivante quand on abordera le sujet passionant de la gestion mémoire !
+
+---
+
+# Les pointeurs
+
+## Arguments de fonction par référence
+
+.cols[
+.fourty[
+En `C`, les arguments des fonctions sont **passés par valeur**, donc une copie de la variable est faite. En utilisant des pointeurs, on peut simuler le passage par référence.
+
+]
+.sixty[
+
+```c
+void increment(int *p) {
+    (*p)++; // Incrémente la valeur pointée par p
+}
+
+int main() {
+    int a = 5;
+    increment(&a); // Passe l'adresse de a
+    printf("a après incrémentation: %d\n", a); // Affiche 6
+    return 0;
+}
+```
+
+]
+]
+
+.cols[.fifty[
+En **`C` moderne**, pour spécifier que la fonction `increment` attend un **pointeur non nul**, on peut utiliser `int p[static 1]` dans la déclaration de la fonction.
+]
+.fifty[
+
+```c
+void increment(int p[static 1]) {
+    (*p)++; // Incrémente la valeur pointée par p
+}
+```
+
+]
+]
+
+---
+
+# Les pointeurs
+
+## Quelques infos en vrac ?
+
+Et ça fait quelle taille en mémoire un pointeur ?
+
+```c
+int *p;
+printf("Taille d'un pointeur: %zu octets\n", sizeof(p));
+```
+
+```bash
+$ ./a.out
+Taille d'un pointeur: 8 octets
+```
+
+La taille d'un pointeur dépend de l'architecture de la machine (32 bits vs 64 bits). Sur une architecture 64 bits, un pointeur occupe généralement 8 octets. La taille d'un pointeur est **indépendante** du type de données qu'il pointe.
+
+---
+
+# Les pointeurs
+
+## Durée de vie et portée
+
+.cols[
+.fifty[
+La durée de vie d'un pointeur dépend de la portée de la variable qu'il pointe. Si le pointeur pointe vers une variable locale, il devient invalide lorsque cette variable sort de son scope.
+
+]
+.fifty[
+
+```c
+int *create_pointer() {
+    int a = 42;
+    return &a; // Dangling pointer !
+}
+```
+
+]
+]
+
+⚠️ Ne jamais retourner l'adresse d'une variable locale depuis une fonction, cela crée un **dangling pointer** (pointeur pendu) qui pointe vers une zone mémoire invalide.
+
+.cols[
+.fourty[
+A contrario, lorsqu'un pointeur est détruit, la mémoire qu'il pointait ne l'est pas.
+
+]
+.sixty[
+
+```c
+int a = 42;
+{
+int *p = &a;
+// p est détruit ici, mais a reste valide
+}
+printf("%d\n", a); // Toujours valide
+```
+
+]
+]
+
+---
+
+# Les tableaux
+
+## En une slide
+
+En `C` un tableau est une collection de variables du **même type**, stockées de manière **contiguë** en mémoire. Chaque élément du tableau est accessible via un index.
+La déclaration d'un tableau se fait de la manière suivante :
+
+```c
+type nom_tableau[taille];
+```
+
+où `type` est le type des éléments du tableau, `nom_tableau` est le nom que vous donnez au tableau, et `taille` est le nombre d'éléments que le tableau peut contenir. Cette taille doit être une constante entière positive et connue à la compilation.
+
+.cols[
+.fifty[
+
+```c
+int tab[5]; // Déclaration d'un tableau de 5 entiers
+tab[0] = 10; // Affectation de la première case
+tab[1] = 20; // Affectation de la deuxième case
+printf("%d\n", tab[0]); // Affiche 10
+```
+
+]
+.fifty[
+⚠️ En C, les indices des tableaux commencent à 0. Donc pour un tableau de taille `n`, les indices vont de `0` à `n-1`.
+]
+]
+
+---
+
+# Les tableaux
+
+## Initialisation
+
+Un tableau peut être initialisé lors de sa déclaration en utilisant des accolades `{}` pour spécifier les valeurs initiales.
+.cols[
+.fifty[
+
+```c
+int tab[5] = {10, 20, 30, 40, 50}; // Initialisation complète
+```
+
+]
+.fifty[
+
+```c
+int tab[5] = {10, 20}; // Initialisation partielle, les
+// autres éléments sont mis à 0
+```
+
+]
+]
+
+En `C`, si vous ne fournissez pas de taille explicite lors de l'initialisation, le compilateur déduit la taille du tableau à partir du nombre d'éléments fournis.
+
+```c
+int tab[] = {10, 20, 30}; // Taille déduite à 3
+```
+
+Vous pouvez également spécifier la position d'initialisation des éléments :
+
+```c
+int tab[5] = {[2] = 30, [4] = 50}; // tab[0] et tab[1] sont 0, tab[2] est 30, tab[3] est 0, tab[4] est 50
+```
+
+---
+
+# Les tableaux
+
+## Attention aux pièges
+
+**Attention**, en `C`, contrairement à ce que vous connaissez par ailleurs :
+
+- La taille d'un tableau doit être une constante connue à la compilation.
+- Si vous passez votre tableau à une fonction, vous perdez l'information de sa taille.
+- Il n'y a pas de vérification des limites d'accès aux tableaux. Accéder à un index hors des bornes définies conduit à un comportement indéfini.
+
+Quand on écrit `int tab[5];`, le compilateur réserve un bloc de mémoire contiguë pour 5 entiers. Chaque entier occupe généralement 4 octets (cela dépend de l'architecture), donc le tableau occupe 20 octets au total.
+
+.def[
+En réalité, le nom du tableau `tab` est traité comme un pointeur vers le premier élément du tableau. Donc `tab` équivaut à `&tab[0]`. Mais on verra cela plus tard.
+]
+
+---
+
+# Les tableaux
+
+## Argument de fonction, pointeur et tableau
+
+En `C`, lorsque vous passez un tableau à une fonction, ce que vous passez réellement est un pointeur vers le premier élément du tableau. Par conséquent, la taille du tableau n'est pas transmise automatiquement à la fonction. Il est donc courant de passer la taille du tableau en argument supplémentaire.
+
+```c
+void afficher_tableau(int tab[], size_t taille) {
+    for (size_t i = 0; i < taille; i++) {
+        printf("%d ", tab[i]);
+    }
+    printf("\n");
+}
+```
+
+Ce passage par pointeur permet à la fonction de modifier les éléments du tableau original si nécessaire. La notation `int tab[]` dans la déclaration de la fonction est équivalente à `int *tab`.
+
+---
+
+# Les tableaux
+
+## Petite pause exercice
+
+.cols[
+.fifty[
+**Exercice : Somme des éléments d'un tableau**
+
+Écrire une fonction `int somme_tableau(int tab[], size_t taille)` qui calcule et retourne la somme des éléments d'un tableau d'entiers.
+]
+.fifty[
+**Exercice : Trouver le maximum dans un tableau**
+Écrire une fonction `int max_tableau(int tab[], size_t taille)` qui trouve et retourne le maximum dans un tableau d'entiers.
+]
+]
+
+---
+
+# Les chaînes de caractères
+
+## Des tableaux un peu spéciaux
+
+En `C`, une chaîne de caractères est représentée comme un tableau de caractères (`char`), terminé par un caractère nul (`'\0'`). Ce caractère spécial indique la fin de la chaîne.
+
+```c
+char message[6] = {'H', 'e', 'l', 'l', 'o', '\0'}; // Chaîne "Hello"
+```
+
+ou bien plus simplement
+
+```c
+char message[] = "Hello"; // Chaîne "Hello", taille déduite
+```
+
+Le `'\0'` est crucial car il permet aux fonctions de la bibliothèque standard de déterminer où la chaîne se termine sans connaître sa taille à l'avance.
+
+---
+
+# Les chaînes de caractères
+
+## Pointeurs et chaînes
+
+En `C`, le nom d'un tableau de caractères (chaîne) agit comme un pointeur vers son premier élément. Par conséquent, vous pouvez manipuler les chaînes de caractères en utilisant des pointeurs.
+
+```c
+char message[] = "Hello";
+char *ptr = message; // ptr pointe vers le premier caractère 'H'
+printf("%c\n", *ptr); // Affiche 'H'
+ptr++; // Avance le pointeur au caractère suivant
+printf("%c\n", *ptr); // Affiche 'e'
+```
+
+---
+
+# Les chaînes de caractères
+
+## Manipulation des chaînes
+
+En `C`, la manipulation des chaînes de caractères se fait principalement à l'aide de fonctions de la bibliothèque standard `<string.h>`. Voici quelques fonctions couramment utilisées :
+
+| Fonction            | Description                                            |
+| ------------------- | ------------------------------------------------------ |
+| `strlen(s)`         | Retourne la longueur de la chaîne `s` (sans le `'\0'`) |
+| `strcpy(dest, src)` | Copie la chaîne `src` dans `dest`                      |
+| `strdup(s)`         | Alloue de la mémoire et copie la chaîne `s` dedans     |
+| `strcat(dest, src)` | Concatène la chaîne`src`à la fin de`dest`              |
+| `strcmp(s1, s2)`    | Compare les chaînes`s1`et`s2`(0 si égales)             |
+| `strchr(s, c)`      | Cherche le caractère`c`dans la chaîne`s`               |
+
+---
+
+# Retour sur les pointeurs
+
+## Algèbre de pointeurs
+
+En `C`, on peut effectuer des opérations arithmétiques sur les pointeurs. Ces opérations sont basées sur la taille du type de données pointé.
+
+```c
+int tab[5] = {10, 20, 30, 40, 50};
+int *p = tab; // p pointe vers tab[0]
+p++; // p pointe maintenant vers tab[1]
+printf("%d\n", *p); // Affiche 20
+p += 2; // p pointe maintenant vers tab[3]
+printf("%d\n", *p); // Affiche 40
+```
+
+Le saut d'un pointeur `p` de type `T*` de `n` positions avance l'adresse de `n * sizeof(T)` octets.
+
+---
+
+# Les chaînes de caractères
+
+## Petite pause exercice
+
+**Exercice : Compter les voyelles**
+Écrire une fonction `size_t compter_voyelles(const char* str)` qui compte le nombre de voyelles dans une chaîne de caractères.
+
+**Exercice : Inverser une chaîne**
+Écrire une fonction `void inverser_chaine(char* str)` qui inverse une chaîne de caractères en place.
+
+---
+
+# Les structures
+
+## Regrouper des données
+
+En `C`, une structure (`struct`) est un type de données dérivé qui permet de regrouper plusieurs variables sous un même nom. Chaque variable à l'intérieur d'une structure est appelée un **membre** ou un **attribut**. Les structures sont utiles pour représenter des objets complexes avec plusieurs attributs. Par exemple si on veut définir un point dans un plan 2D on peut faire :
+
+```c
+struct Point {
+    char label; // Étiquette du point
+    int x; // Coordonnée x
+    int y; // Coordonnée y
+};
+```
+
+---
+
+# Les structures
+
+## Utilisation
+
+L'utilisation se fait alors de la manière suivante :
+
+```c
+struct Point p1; // Déclaration d'une variable de type Point
+p1.label = 'A'; // Accès aux membres
+p1.x = 10;
+p1.y = 20;
+```
+
+L'initialisation peut aussi se faire de la manière suivante :
+
+```c
+struct Point p2 = {'B', 30, 40}; // Initialisation lors de la déclaration
+```
+
+---
+
+# Les structures
+
+## Pointeurs vers des structures
+
+En `C`, vous pouvez également créer des pointeurs vers des structures. Cela est particulièrement utile lorsque vous souhaitez manipuler des structures sans les copier, ou lorsque vous travaillez avec des fonctions.
+
+```c
+struct Point {
+    char label;
+    int x;
+    int y;
+};
+struct Point p1 = {'A', 10, 20};
+struct Point *ptr = &p1; // Pointeur vers la structure p1
+printf("Point %c: (%d, %d)\n", ptr->label, ptr->x, ptr->y);
+```
+
+L'opérateur `->` est utilisé pour accéder aux membres d'une structure via un pointeur.
+
+---
+
+# Les structures
+
+## Petite pause exercice
+
+**Exercice : Structure Rectangle**
+Définir une structure `Rectangle` avec deux points (coin supérieur gauche et coin inférieur droit). Écrire une fonction pour calculer l'aire du rectangle.
+
+**Exercice : Structure Étudiant**
+Définir une structure `Etudiant` avec des membres pour le nom, l'âge et une liste de 5 notes.
+
+- Écrire une fonction pour afficher les informations de l'étudiant.
+- Écrire une fonction pour calculer la moyenne des notes.
+- Définir un tableau de 3 étudiants et afficher leurs informations ainsi que leur moyenne.
+- Trier les étudiants par ordre croissant des moyennes et afficher le classement.
+
+---
+
+# Un premier "gros" exercice en C
+
+**Exercice : Snake Game Simplifié**
+Créer une version simplifiée du jeu Snake en utilisant des tableaux pour représenter le terrain de jeu et la position du serpent.
+
+Je suis super sympa, je vous ai fait un squelette de code pour vous aider à démarrer.
+
+<iframe src="https://giphy.com/embed/l0MYt5jPR6QX5pnqM" width="480" height="270" style="position: absolute; top: 55%; left: 35%; opacity: 0.2" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+
+Le code est disponible ici [https://github.com/ue12-p25/c-snake-starter](https://github.com/ue12-p25/c-snake-starter)
 
 ---
 
@@ -1444,4 +1945,3 @@ $$π≈4×(1−1/3+1/5−1/7+…)$$
 </div>
 
 ---
-
