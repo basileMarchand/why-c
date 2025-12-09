@@ -1880,6 +1880,360 @@ Le code est disponible ici [https://github.com/ue12-p25/c-snake-starter](https:/
 
 ---
 
+class: middle, center
+
+# Séance 3 
+
+## TP Snake 
+## Séparation du code en C
+
+---
+
+# Pourquoi séparer un programme ?
+
+.center[Tout simplement parce qu'on est pas des degxxxxxxe et qu'on range un peu nos affaires !]
+
+**Avantages** :
+
+.center[Lisibilité, Modularité ,Compilation incrémentale <br> Réutilisation de code, Encapsulation]
+
+
+**Grands principes** : 
+
+Un programme C est composé de fonctions et de variables et peut résider dans un ou plusieurs fichiers source.
+
+L'organisation du code en plusieurs fichiers est gérée par le système de compilation et de liaison (linking), ainsi que par des règles strictes concernant la visibilité et la déclaration des identifiants partagés.
+
+
+---
+
+# Séparation .c vs .h 
+
+Afin de simplifier la gestion des déclarations partagées et d'assurer la cohérence des types et des fonctions entre les fichiers sources, il est d'usage de regrouper les déclarations externes dans des fichiers d'en-tête (header files, qui portent généralement l'extension .h)
+
+**Rôle des Headers** : Les fichiers d'en-tête contiennent principalement les prototypes des fonctions (déclarations de la fonction, de son type de retour et de ses arguments) et les déclarations extern des variables globales
+
+**Inclusion** : Le fichier d'en-tête est inclus dans chaque fichier source (.c) qui utilise ces entités au moyen de la directive de préprocesseur `#include`. Cette directive a pour effet d'insérer le contenu du fichier d'en-tête directement dans le fichier source au moment de la précompilation.
+
+
+.center[***L'utilisation de fichiers d'en-tête garantit que toutes les unités de compilation disposent des mêmes définitions et déclarations***]
+
+---
+
+# Processus de compilation 
+
+Le processus de création d'un exécutable à partir de plusieurs fichiers sources implique généralement les étapes suivantes :
+
+1. Compilation : Chaque fichier source (.c) est compilé individuellement en un fichier objet (.o).
+2. Liaison (Linking) : Tous les fichiers objets (.o) sont ensuite liés ensemble pour produire le programme exécutable final. Le linker est chargé de résoudre toutes les références externes entre les différents modules.
+
+L'étape de liaison est essentielle pour "connecter les occurrences" des fonctions et variables définies dans un fichier et appelées dans un autre
+
+| Élément           | Extension | Rôle                                                     |
+|-------------------|-----------|-----------------------------------------------------------|
+| Fichier source    | `.c`      | Contient les définitions des fonctions et des variables. |
+| Fichier d'en-tête | `.h`      | Contient les déclarations (`extern` et prototypes).      |
+| Fichier objet     | `.o`      | Produit intermédiaire après compilation, prêt pour la liaison. |
+
+
+---
+
+# Include guards 
+
+Pour éviter les inclusions multiples d'un même fichier d'en-tête, on utilise des "include guards". Cela empêche les redéfinitions et les erreurs de compilation.
+
+Ces include guards sont généralement implémentés à l'aide de directives de préprocesseur `#ifndef`, `#define` et `#endif`.
+
+```c
+#ifndef NOM_DU_FICHIER_H
+#define NOM_DU_FICHIER_H
+// Contenu du fichier d'en-tête
+#endif // NOM_DU_FICHIER_H
+```
+
+Il est possible aussi d'utiliser `#pragma once` qui est une directive non standard mais largement supportée par les compilateurs modernes.
+
+---
+
+# Concepts clés de la séparation en C
+## Notions de déclaration, définition et portée 
+
+En `C`, il est crucial de comprendre la différence entre **déclaration** et **définition**, ainsi que les concepts de **portée**/**visibilité**. 
+
+
+**Déclaration** : annonce un symbole, pas d’allocation  
+**Définition** : crée l’objet, réserve la mémoire
+
+
+Exemples :
+```c
+extern int x;      // déclaration
+int x = 0;         // définition
+int add(int a,b);  // déclaration
+int add(int a,b){ return a+b; } // définition
+```
+
+Pour déclarer une variable sans la définir, on utilise le mot-clé `extern`. Cela indique au compilateur que la variable est définie ailleurs (dans un autre fichier source).
+
+---
+
+# Concepts clés de la séparation en C
+## Portée et visibilité 
+
+La **portée** (scope) d'un symbole détermine où il est accessible dans le code source. La **visibilité** (linkage) détermine si un symbole peut être référencé depuis d'autres fichiers.
+
+Pour gérer la portée et la visibilité, on utilise les mots-clés `extern` et `static`.
+
+| Mot-clé | Effet | Portée |
+|--------|-------|--------|
+| (rien) | symbole externe | visible partout |
+| extern | déclare sans définir | visible ailleurs |
+| static | liaison interne | visible uniquement dans le fichier |
+
+Ces mots clés permettent de contrôler l'accès aux fonctions et variables entre différents fichiers source, évitant ainsi les conflits de noms et assurant une meilleure encapsulation du code.
+
+---
+
+# Concepts clés de la séparation en C
+## Portée et visibilité (demo)
+
+
+
+.cols[
+  .fifty[
+  .smaller[
+
+```c
+#ifndef FICHIER1_H
+#define FICHIER1_H
+// Déclaration d'une variable globale définie ailleurs
+extern int global_counter;
+// Prototype d'une fonction publique
+void increment_counter(void);
+// Prototype d'une fonction publique utilisant une variable privée de fichier1.c
+int get_hidden_value(void);
+#endif
+```
+
+```c
+#include "fichier1.h"
+#include <stdio.h>
+// Définition de la variable globale
+int global_counter = 0;
+// Variable privée à ce fichier (NON visible ailleurs)
+static int hidden_value = 42;
+// Fonction publique : visible via le header
+void increment_counter(void)
+{
+    global_counter++;
+}
+// Fonction strictement privée
+static void secret_function(void)
+{
+    printf("Hello from secret\n");
+}
+// Fonction publique qui lit une variable privée
+int get_hidden_value(void)
+{
+    secret_function();
+    return hidden_value;
+}
+
+```
+  ]
+  ]
+  .fifty[
+.smaller[
+
+```c
+#ifndef FICHIER2_H
+#define FICHIER2_H
+// variable globale déclarée ici mais définie dans fichier2.c
+extern int module2_value;
+// fonction publique
+int compute_sum(int x);
+#endif
+```
+
+```c
+#include "fichier2.h"
+#include "fichier1.h" // on va utiliser global_counter
+// Définition d’une variable globale visible partout
+int module2_value = 10;
+// Variable privée au module2
+static int local_buffer = 100;
+// Fonction publique
+int compute_sum(int x)
+{
+    // utilise global_counter (défini dans fichier1.c)
+    return x + module2_value + global_counter;
+}
+// Fonction privée
+static int internal_compute(int x)
+{
+    return x + local_buffer;
+}
+```
+]
+  ]
+]
+
+---
+
+# Concepts clés de la séparation en C
+## Portée & Linkage (demo)
+
+.cols[.sixty[
+  .smaller[
+```c
+#include <stdio.h>
+#include "fichier1.h"
+#include "fichier2.h"
+
+int main(void)
+{
+    printf("global_counter = %d\n", global_counter);
+    printf("module2_value  = %d\n", module2_value);
+
+    increment_counter(); // modifie la variable globale
+    printf("after increment: global_counter = %d\n", global_counter);
+
+    printf("hidden_value (via getter) = %d\n",
+           get_hidden_value()); // accès indirect OK
+
+    int result = compute_sum(5);
+    printf("compute_sum(5) = %d\n", result);
+
+    // --- EXEMPLES INVALIDES (montrés pour la théorie) ---
+
+    // printf("%d", hidden_value); → ERREUR : variable static invisible
+    // secret_function();          → ERREUR : fonction static invisible
+    // internal_compute(5);        → ERREUR : fonction static invisible
+
+    return 0;
+}
+``` 
+
+  ]
+]
+.fourty[
+```bash
+$ gcc -c fichier1.c
+$ gcc -c fichier2.c
+$ gcc -c main.c
+$ gcc fichier1.o fichier2.o main.o -o prog
+```
+
+Si vous êtes curieux, vous pouvez vérifier les symboles visibles dans chaque fichier objet avec la commande `nm` :
+
+```bash
+$ nm fichier1.o
+```
+]
+]
+
+---
+
+# Concepts clés de la séparation en C
+## Résolution des symboles
+
+Lors de la phase de linking, le linker résout les références aux symboles (fonctions et variables) entre les différents fichiers objets. Il associe chaque appel de fonction ou accès à une variable à sa définition correspondante.
+
+Si votre programme utilise une fonction ou une variable qui n'a pas été définie dans aucun des fichiers objets, le linker génère une erreur de type "undefined reference".
+
+Si vous utilisez des fonctions définies dans des bibliothèques externes (comme la bibliothèque standard C), vous devez également indiquer au linker où trouver ces bibliothèques. Cela se fait généralement en utilisant des options de ligne de commande lors de l'appel au compilateur. Par exemple pour utiliser la librairie mathématique `-lm` :
+
+```bash
+gcc main.o -o prog -lm
+```
+
+Pour voir les librairies liées à un exécutable, on peut utiliser la commande `ldd` :
+
+```bash
+$ ldd prog
+```
+
+---
+
+# Notion de bibliothèque
+## Pourquoi des bibliothèques ?
+
+Les bibliothèques permettent de regrouper du code réutilisable dans des fichiers séparés, facilitant ainsi la modularité et la maintenance du code. Elles offrent plusieurs avantages :
+
+- Réutilisation du code : les fonctions communes peuvent être utilisées dans plusieurs projets sans duplication.
+- Réduction de la taille des exécutables : le code commun est stocké une seule fois
+- Mise à jour facilitée : les bibliothèques peuvent être mises à jour indépendamment des applications qui les utilisent.
+
+Surtout, elles permettent de partager du code entre plusieurs programmes.
+
+---
+
+# Notion de bibliothèque
+## Types de bibliothèques
+
+Il existe deux principaux types de bibliothèques en `C` :
+
+- Bibliothèques statiques (.a) : le code de la bibliothèque est copié dans l’exécutable lors de la phase de linking. Cela rend l’exécutable autonome, mais augmente sa taille.
+- Bibliothèques dynamiques (.so sur Linux, .dll sur Windows, .dylib sur macOS) : le code de la bibliothèque est chargé en mémoire au moment de l’exécution. Cela permet de partager une seule copie de la bibliothèque entre plusieurs programmes, réduisant ainsi la taille des exécutables et facilitant les mises à jour.
+
+Chaque type de bibliothèque a ses propres avantages et inconvénients, et le choix entre les deux dépend des besoins spécifiques du projet.
+
+---
+
+# Notion de bibliothèque
+## Création et utilisation
+
+Pour créer et utiliser des bibliothèques en `C`, voici les étapes générales :
+1. **Création de la bibliothèque** :
+   - Compiler les fichiers source (.c) en fichiers objets (.o).
+   - Pour une bibliothèque statique, utiliser l'outil `ar` pour créer un fichier `.a`.
+   - Pour une bibliothèque dynamique, utiliser le compilateur avec l'option `-shared`.
+
+2. **Utilisation de la bibliothèque** :
+    - Inclure le fichier d'en-tête (.h) de la bibliothèque dans votre code source.
+    - Lors de la compilation, spécifier le chemin vers la bibliothèque et son nom avec les options `-L` (chemin) et `-l` (nom).
+
+Au runtime, il peut être nécessaire de configurer les chemins de recherche des bibliothèques dynamiques. Cele se se fait via des variables d'environnement ou des options de compilation spécifiques, par exemple `LD_LIBRARY_PATH`.
+
+---
+
+# Notion de bibliothèque
+## Bibliothèque statique vs dynamique
+
+.cols[
+  .fifty[
+    **Statique**
+
+```bash 
+$ gcc -c fichier1.c
+$ gcc -c fichier2.c
+$ ar rcs libmylib.a fichier1.o fichier2.o
+```
+Utilisation 
+```bash
+$ gcc main.o -L. -lmylib
+```
+
+  ]
+
+.fifty[
+  **Dynamique**
+```bash 
+$ gcc -c -fPIC fichier1.c
+$ gcc -c -fPIC fichier2.c
+$ gcc -shared fichier1.o fichier2.o -o libmylib.so
+```
+Utilisation 
+```bash
+$ gcc main.o -L. -lmylib
+```
+]
+]
+
+.center[A vous de regarder ce que ca change ! Notamment au niveau de la taille de l’exécutable et de la gestion des mises à jour.]
+
+---
+
 # Programme des séances
 
 .cols[
