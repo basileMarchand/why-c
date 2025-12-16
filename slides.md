@@ -2234,6 +2234,623 @@ $ gcc main.o -L. -lmylib
 
 ---
 
+class: center, middle
+
+# Séance 4
+
+## **LA** mémoire en C
+
+---
+
+# La mémoire en C 
+
+Ca y est on arrive enfin **au** sujet le plus important en C : la gestion de la mémoire !
+
+Vous allez me dire "Mais on a déjà parlé de mémoire avec les variables et les pointeurs non ?" 
+
+Oui et non. Jusqu'à présent on a surtout parlé de la mémoire **statique**, i.e. celle que l'on est capable de dimensionner à la compilation. 
+
+Mais on a également besoin de mémoire **dynamique**, i.e. que l'on peut allouer et libérer à l'exécution, en fonction des besoins du programme. Et cette mémoire dynamique ca va être votre responsabilité en C !
+
+---
+
+# La mémoire en C 
+## Types de mémoire 
+
+En `C`, la mémoire est généralement divisée en plusieurs segments principaux :
+.cols[
+  .seventy[
+- Stack (pile) : utilisé pour les variables locales et les appels de fonctions. La mémoire est allouée et libérée automatiquement lorsque les fonctions sont appelées et retournées.
+- Heap (tas) : utilisé pour la mémoire dynamique allouée via `malloc`, `calloc`, `realloc` et libérée avec `free`. La gestion de cette mémoire est manuelle.
+- BSS : segment pour les variables globales et statiques non initialisées.
+- Data : segment pour les variables globales et statiques initialisées.
+- Text : segment pour le code exécutable et les constantes.
+
+  ]
+  .thirty[.smaller[
+```
++------------------------+
+| Stack (pile)           |
+| - variables locales    |
+| - frames d'appel       |
++------------------------+
+|        ↓               |
+|        ↑               |
+| Heap (tas)             |
+| - malloc / free        |
++------------------------+
+| BSS                    |
+| - globales non init    |
++------------------------+
+| Data                   |
+| - globales init        |
++------------------------+
+| Text                   |
+| - code                 |
+| - constantes           |
++------------------------+
+
+```
+  ]
+  ]
+]
+
+---
+# La mémoire en C
+## La stack (pile)
+
+La stack (pile) est une région de la mémoire utilisée pour stocker les variables locales et les informations de contrôle des fonctions (comme les adresses de retour). La gestion de la pile est automatique : lorsque vous entrez dans une fonction, un nouveau "frame" est créé sur la pile, et lorsque vous quittez la fonction, ce frame est détruit.
+
+.center[**Caractéristiques de la stack**]
+- Allocation et libération rapide.
+- Taille limitée (dépend du système).
+- Accès en LIFO (Last In, First Out).
+
+La stack correspond à la mémoire dimensionnable à la compilation. 
+
+---
+
+# La mémoire en C
+## Text, Data et BSS segment 
+
+Les segments Text, Data et BSS sont des parties spécifiques de la mémoire utilisées pour stocker différents types de données dans un programme C. 
+
+.cols[
+  .fifty[
+.center[**Segment Text**]
+- Contient le code exécutable du programme.
+- Généralement en lecture seule pour éviter les modifications accidentelles.
+.center[**Segment Data**]
+- Contient les variables globales et statiques initialisées.
+- La taille est déterminée à la compilation.
+.center[**Segment BSS**]
+- Contient les variables globales et statiques non initialisées.
+- Initialisé à zéro au démarrage du programme.
+  ]
+  .fifty[
+
+  ]
+]
+
+---
+
+# La mémoire en C
+## Pour le fun - voir la mémoire 
+
+Vous pouvez visualiser les différents segments mémoire d'un programme en utilisant des outils comme `gdb` ou `objdump`.
+.cols[
+.fifty[
+```bash
+$ gcc -g -o mon_programme mon_programme.c
+$ gdb mon_programme
+(gdb) info files
+...
+        0x0000000000001060 - 0x000000000000119b is .text
+        0x000000000000119c - 0x00000000000011a9 is .fini
+        0x0000000000002000 - 0x0000000000002008 is .rodata
+...
+        0x0000000000004000 - 0x0000000000004018 is .data
+        0x0000000000004018 - 0x0000000000004028 is .bss
+```
+]
+.fifty[
+```bash
+$ objdump -h mon_programme
+mon_programme:     file format elf64-x86-64
+Sections:
+ 15 .text         0000013b  0000000000001060  0000000000001060  00001060  2**4
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+...
+ 17 .rodata       00000008  0000000000002000  0000000000002000  00002000  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+...
+ 24 .data         00000018  0000000000004000  0000000000004000  00003000  2**3
+                  CONTENTS, ALLOC, LOAD, DATA
+ 25 .bss          00000010  0000000000004018  0000000000004018  00003018  2**2
+                  ALLOC
+```
+]
+]
+
+---
+
+# La mémoire en C
+## Voir les symboles
+
+Une autre façon de voir où sont stockées les différents symboles est d'utiliser la commande `nm` :
+
+.smaller[
+.cols[
+  .fifty[
+```c
+#include <stdio.h>
+
+int global_init = 42;       // DATA (initialisé)
+static int static_init = 7; // DATA (initialisé)
+
+int global_uninit;        // BSS (0 implicite)
+static int static_uninit; // BSS (0 implicite)
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+int main(void)
+{
+    printf("%d\n", add(global_init, global_uninit));
+    return 0;
+}
+
+```
+  ]
+  .fifty[
+```bash
+$ nm demo
+...
+0000000000004018 B __bss_start
+...
+0000000000004000 D __data_start
+...
+0000000000001060 T _start
+0000000000001149 T add
+...
+0000000000004010 D global_init
+000000000000401c B global_uninit
+0000000000001161 T main
+                 U printf@GLIBC_2.2.5
+00000000000010c0 t register_tm_clones
+0000000000004014 d static_init
+0000000000004020 b static_uninit
+```
+
+| Lettre    | Segment | Signification                     |
+| --------- | ------- | --------------------------------- |
+| `T` / `t` | TEXT    | Code (fonctions)                  |
+| `D` / `d` | DATA    | Données globales initialisées     |
+| `B` / `b` | BSS     | Données globales non initialisées |
+| `R` / `r` | RODATA  | Lecture seule (constantes)        |
+| `U`       | —       | Symbole externe (librairie)       |
+| `W` / `w` | —       | Weak symbol                       |
+
+
+  ]
+]
+]
+
+---
+# La mémoire en C 
+## La heap (tas)
+
+Ca y est on arrive enfin à la mémoire dynamique : la heap (tas) !
+
+
+
+
+Car oui, dans beaucoup de cas on ne peut pas savoir à l'avance combien de mémoire on va avoir besoin. Par exemple si on lit un fichier dont on ne connait pas la taille, ou si on veut créer une structure de données dont la taille peut varier à l'exécution (liste chaînée, arbre, etc.). Si on veut faire de l'algèbre linéaire avec des matrices dont la taille est définie par l'utilisateur, on ne peut pas dimensionner ces matrices à la compilation.
+
+---
+
+# La mémoire en C
+## Gestion de la mémoire dynamique
+
+Pour gérer la mémoire dynamique en `C`, on utilise les fonctions suivantes de la bibliothèque standard `<stdlib.h>` :
+- `malloc(size_t size)` : alloue un bloc de mémoire de `size` octets et retourne un pointeur vers le début de ce bloc. La mémoire n'est pas initialisée.
+- `calloc(size_t num, size_t size)` : alloue un bloc de mémoire pour `num` éléments de `size` octets chacun et initialise tous les octets à zéro.
+- `realloc(void *ptr, size_t size)` : redimensionne un bloc de mémoire précédemment alloué pointé par `ptr` à une nouvelle taille `size`. Si la nouvelle taille est plus grande, le contenu existant est préservé.
+- `free(void *ptr)` : libère un bloc de mémoire précédemment alloué pointé par `ptr`.
+
+---
+
+# La mémoire en C
+## Comment connaitre la taille a allouer ?
+
+Vous vous dites peut-être "Ok, mais comment je sais combien de mémoire j'ai besoin ?" ... Pas de problème, on a des astuces pour ça !
+
+La fonction `sizeof` permet de connaitre la taille en octets d'un type ou d'une variable. Par exemple :
+
+```c
+sizeof(int);        // Taille d'un int
+sizeof(double);     // Taille d'un double
+sizeof(struct Point); // Taille d'une structure Point
+``` 
+
+On peut donc utiliser `sizeof` pour allouer la bonne quantité de mémoire. Par exemple, pour allouer un tableau de `n` entiers :
+
+```c
+int *tab = malloc(n * sizeof(int));
+``` 
+
+---
+
+# La mémoire en C
+## Exemple d'utilisation
+
+.smaller[
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+    size_t n = 5;
+    // Allouer un tableau de n entiers
+    int *tab = malloc(n * sizeof(int));
+    if (tab == nullptr) {
+        fprintf(stderr, "Erreur d'allocation mémoire\n");
+        return 1;
+    }
+
+    // Initialiser et afficher le tableau
+    for (size_t i = 0; i < n; i++) {
+        tab[i] = i * 10;
+        printf("%d ", tab[i]);
+    }
+    printf("\n");
+
+    // Libérer la mémoire allouée
+    free(tab);
+    return 0;
+}
+```
+]
+
+
+---
+
+# La mémoire en C
+## Durée de vie != Portée 
+
+**Attention**, la durée de vie d'une variable allouée dynamiquement (sur le tas) est indépendante de sa portée (scope). Par exemple :
+.cols[
+  .fifty[
+```c
+void fonction() {
+    int *ptr = malloc(sizeof(int)); 
+    *ptr = 42;
+    // ptr est valide ici
+}
+// ptr sort de la portée ici
+// mais la mémoire allouée reste valide
+```
+  ]
+.fifty[
+***Félicitations ! Vous venez de créer une fuite mémoire !***
+.def[
+La mémoire allouée avec `malloc` (ou `calloc`, `realloc`) reste valide jusqu'à ce qu'elle soit libérée avec `free`, même si le pointeur qui la référence sort de la portée.
+]
+]
+]
+
+--
+
+.center.clignote[
+  **A chaque `malloc` doit correspondre un seul et unique `free` !**
+]
+
+---
+
+# La mémoire en C
+## Allocation et structures 
+
+.cols[
+  .fifty[
+Considérons pour commencer une structure simple représentant un point dans un plan 2D. 
+
+  ]
+  .fifty[
+.smaller[
+```c
+struct Point {
+    int x;
+    int y;
+};
+typedef struct Point Point;
+```
+  ]
+
+  ]
+  ]
+
+.cols[
+  .fifty[
+
+Si maintenant on veut allouer un tableau de `n` points, on peut faire comme suit :
+
+  ]
+
+.fifty[
+.smaller[
+```c 
+Point *points = malloc(n * sizeof(Point));
+for (size_t i = 0; i < n; i++) {
+    points[i].x = i;
+    points[i].y = i * 2;
+}
+```
+]
+]
+]
+
+
+.cols[
+  .fifty[ 
+.smaller[
+```c
+int *tmp = realloc(points, new_size * sizeof(Point));
+if(tmp != nullptr) {
+    points = tmp;
+} else {
+    // gérer l'erreur d'allocation
+}
+
+```
+]
+]
+  .fifty[
+Si on veut faire grandir dynamiquement ce tableau, on peut utiliser `realloc`. 
+  ]
+]
+
+
+.cols[
+  .fifty[ 
+```c
+free(points);
+```
+
+  ]
+  .fifty[
+    Il ne faut pas oublier à la fin de libérer la mémoire allouée. 
+  ]
+]
+
+---
+
+# La mémoire en C 
+## Allocation de mémoire pour des pointeurs dans des structures
+
+Il est bien évidemment possible d'avoir des pointeurs dans des structures. Dans ce cas, il faut allouer la mémoire pour ces pointeurs séparément. 
+
+.cols[.fourty[
+Par exemple, considérons une structure représentant une liste d'entiers : 
+]
+.sixty[
+
+```c
+struct IntList {
+    size_t size;   // nombre d'éléments
+    int *data;     // pointeur vers les données
+};
+typedef struct IntList IntList;
+```
+
+]]
+
+.cols[
+  .fifty[
+Pour initialiser une telle structure, on peut faire comme suit :
+
+  ]
+  .fifty[
+```c
+IntList list;
+list.size = n;
+list.data = malloc(n * sizeof(int));
+```
+
+  ]
+]
+
+```c
+// N'oubliez pas de libérer la mémoire plus tard
+free(list.data);
+```
+
+
+---
+
+# La mémoire en C
+## Allocation de mémoire pour des pointeurs dans des structures (suite)
+
+En pratique, on encapsule souvent cette logique dans des fonctions dédiées pour créer et libérer ces structures.
+
+
+.smaller[
+.cols[.fifty[
+```c
+IntList* create_int_list(size_t n) {
+    IntList *list = malloc(sizeof(IntList));
+    if (list == nullptr) return nullptr;
+    list->size = n;
+    list->data = malloc(n * sizeof(int));
+    if (list->data == nullptr) {
+        free(list);
+        return nullptr;
+    }
+    return list;
+}
+```
+
+]
+.fifty[
+```c
+void free_int_list(IntList *list) {
+    if (list != nullptr) {
+        free(list->data);
+        free(list);
+    }
+}
+``` 
+]
+]
+]
+
+```c 
+int main(){
+    IntList *my_list = create_int_list(10);
+    // Utilisation de my_list
+    free_int_list(my_list);
+    return 0;
+}
+```
+
+---
+
+# La mémoire en C
+## Les erreurs courantes
+
+En `C`, la gestion manuelle de la mémoire peut entraîner plusieurs types d'erreurs courantes :
+
+- *Fuites de mémoire* : oublier de libérer la mémoire allouée avec `free`, ce qui conduit à une consommation excessive de mémoire.
+- *Double libération* : appeler `free` plusieurs fois sur le même pointeur, ce qui peut provoquer des comportements indéfinis.
+- *Utilisation de mémoire* libérée : accéder à de la mémoire après l'avoir libérée, ce qui peut entraîner des plantages ou des données corrompues.
+- *Débordement de mémoire* : écrire au-delà des limites d'un bloc de mémoire alloué, ce qui peut corrompre d'autres données.
+- *Non-vérification des retours d'allocation* : ne pas vérifier si `malloc`, `calloc` ou `realloc` ont réussi, ce qui peut conduire à des accès à des pointeurs nuls.
+
+
+---
+# La mémoire en C
+## Outils de détection et bonnes pratiques
+
+Pour éviter et détecter les erreurs de gestion de mémoire en `C`, plusieurs outils et bonnes pratiques peuvent être utilisés :
+
+- *Valgrind* : un outil populaire pour détecter les fuites de mémoire, les accès invalides et d'autres erreurs liées à la mémoire.
+- *AddressSanitizer* : un outil de détection des erreurs de mémoire intégré dans les compilateurs modernes comme GCC et Clang.
+- *Initialisation des pointeurs* : toujours initialiser les pointeurs à `NULL` (ou `nullptr`) après la déclaration.
+- *Vérification des allocations* : toujours vérifier le retour de `malloc`, `calloc` et `realloc` avant d'utiliser le pointeur retourné.
+- *Libération systématique* : s'assurer que chaque allocation a une libération correspondante.
+- *Utilisation de fonctions dédiées* : encapsuler la logique d'allocation et de libération dans des fonctions pour réduire les erreurs.
+
+---
+
+
+# Pause exercice
+
+**Exercice : Gestion de mémoire avec des structures**
+
+.smaller[
+```c
+struct Matrix {
+
+    size_t rows;
+    size_t cols;
+    double **data; // Pointeur vers un tableau de pointeurs
+};
+typedef struct Matrix Matrix;
+
+```
+]
+
+- Écrire une fonction `Matrix* create_matrix(size_t rows, size_t cols)` qui alloue dynamiquement une matrice de dimensions `rows x cols`.
+- Écrire une fonction `void free_matrix(Matrix* mat)` qui libère la mémoire allouée pour la matrice.
+- Écrire une fonction `void set_value(Matrix* mat, size_t row, size_t col, double value)` pour définir la valeur d'un élément de la matrice.
+- Écrire une fonction `double get_value(const Matrix* mat, size_t row, size_t col)` pour obtenir la valeur d'un élément de la matrice.
+- écrire une fonction `Matrix* product(const Matrix* a, const Matrix* b)` qui calcule le produit de deux matrices.
+
+
+---
+
+# Pause exercice (suite)
+
+**Exercice : Gestion de mémoire avec des structures (suite)**
+
+.cols[
+  .fifty[
+On va faire un évaluateur simple d'expressions arithmétiques en utilisant des arbres binaires.
+
+  ]
+  .fifty[
+.smaller[
+```c
+struct Node {
+    char operator; // '+', '-', '*', '/' ou '\0' pour les feuilles
+    char var_name; // nom de la variable pour les feuilles
+    double value;  // valeur pour les feuilles
+    struct Node *left;
+    struct Node *right;
+};
+typedef struct Node Node;
+```
+]
+  ]
+]
+
+
+- Écrire une fonction `Node* create_leaf(double value)` qui crée une feuille avec une valeur donnée.
+- Écrire une fonction `Node* create_operator_node(char operator, Node* left, Node* right)` qui crée un nœud opérateur avec deux sous-arbres.
+- Écrire une fonction `Node* create_variable_node(char var_name)` qui crée une feuille représentant une variable.
+- Écrire une fonction `double evaluate(const Node* root, Context* ctx)` qui évalue l'expression représentée par l'arbre.
+- Écrire une fonction `void free_tree(Node* root)` qui libère la mémoire allouée pour l'arbre.
+
+
+---
+
+# Pause exercice (fin)
+
+On veut pouvoir faire des choses comme ça :
+.smaller[
+
+```c
+int main(){
+  // Exemple 1: 2*x + 3
+  //Arbre:      +
+  //          /   \
+  //         *     3
+  //        / \
+  //       2   x
+  //
+  printf("Exemple 1: 2*x + 3\n");
+  Node *expr1 = create_operator_node('+',
+                              create_operator_node('*',
+                                            create_leaf(2),
+                                            create_variable_node('x')),
+                              create_leaf(3));
+
+  Context *ctx = context_create();
+  context_set(ctx, 'x', 5);
+  printf("  avec x=5: 2*5 + 3 = %.2f\n", evaluate(expr1, ctx));
+
+  context_set(ctx, 'x', 10);
+  printf("  avec x=10: 2*10 + 3 = %.2f\n\n", evaluate(expr1, ctx));
+
+  node_free(expr1);
+  context_free(ctx);
+  return 0; 
+}
+```
+]
+
+
+
+
+
+
+
+
+---
+
+
 # Programme des séances
 
 .cols[
