@@ -2842,14 +2842,573 @@ int main(){
 ]
 
 
+---
 
+class: middle, center
 
+# Séance 5
 
-
+## Aspects un peu plus avancés
 
 
 ---
 
+# Le mot clé `static`
+## 3 usages principaux
+
+En `C`, le mot-clé `static` a plusieurs usages selon le contexte dans lequel il est utilisé :
+
+1. **Variables locales** : Lorsqu'une variable locale est déclarée avec `static`, sa durée de vie est étendue à toute la durée du programme, mais sa portée reste limitée à la fonction dans laquelle elle est définie. Cela signifie que la variable conserve sa valeur entre les appels de fonction.
+
+2. **Variables globales** : Lorsqu'une variable globale est déclarée avec `static`, sa portée est limitée au fichier source dans lequel elle est définie. Cela empêche d'autres fichiers de référencer cette variable, ce qui aide à éviter les conflits de noms.
+
+3. **Fonctions** : Lorsqu'une fonction est déclarée avec `static`, sa portée est également limitée au fichier source dans lequel elle est définie. Cela empêche la fonction d'être appelée depuis d'autres fichiers, ce qui est utile pour encapsuler des fonctions utilitaires.
+
+---
+
+# Le mot clé `static`
+## Durée de vie des variables statiques
+
+.cols[
+  .seventy[
+```c
+#include <stdio.h>
+void compteur() {
+    static int count = 0; // Variable statique locale
+    count++;
+    printf("Compteur: %d\n", count);
+}
+
+int main() {
+    for (int i = 0; i < 5; i++) {
+        compteur();
+    }
+    return 0;
+}
+```
+  ]
+  .thirty[
+**Sortie :**
+```shell
+$ ./a.out 
+Compteur: 1
+Compteur: 2
+Compteur: 3
+Compteur: 4
+Compteur: 5
+```
+  ]
+]
+
+---
+
+# Le mot clé `static`
+## Singleton pattern en C
+
+Le mot-clé `static` peut être utilisé pour implémenter le pattern Singleton en `C`, garantissant qu'une seule instance d'une structure ou d'un objet est créée et accessible globalement.
+.smaller[
+.cols[
+  .fifty[
+```c
+#include <stdlib.h>
+#include <stdio.h>
+
+typedef struct S
+{
+    int a;
+    double b;
+} S;
+
+S *singleton()
+{
+    static S s_instance = {.a = 42, .b = 3.14};
+    return &s_instance;
+}
+
+void print_s(S s[static 1])
+{
+    printf("{.a = %d, S.b = %.2f} @ %p\n", s->a, s->b, (void *)s);
+}
+```
+  ]
+  .fifty[
+```c
+
+int main()
+{
+    S *s = singleton();
+    print_s(s);
+
+    s->a += 1;
+    s->b *= -1.0;
+    S *s2 = singleton();
+    print_s(s2);
+
+    return EXIT_SUCCESS;
+}
+``` 
+
+```shell
+./a.out
+{.a = 42, S.b = 3.14} @ 0x562eee363020
+{.a = 43, S.b = -3.14} @ 0x562eee363020
+```
+  ]
+]
+]
+
+---
+
+# Le mot clé `inline`
+## Fonctions inline
+
+Le mot-clé `inline` en `C` est utilisé pour suggérer au compilateur d'insérer le code de la fonction directement à l'endroit où elle est appelée, plutôt que de faire un appel de fonction traditionnel.
+
+C'est notamment utile pour les petites fonctions qui sont appelées fréquemment. Il est indispensable de déclarer les fonctions `inline` quand vous les définissez dans un fichier d'en-tête (`.h`), afin d'éviter les erreurs de linkage.
+
+.smaller[
+.cols[
+  .sixty[
+```c 
+#include <stdio.h>
+
+static inline int add(int a, int b)
+{
+    return a + b;
+}
+int compute(int x)
+{
+    int s = 0;
+    for (int i = 0; i < x; ++i)
+    {
+        s += add(i, x);
+    }
+    return s;
+}
+```
+]
+.fourty[
+```c
+int main(void)
+{
+    printf("%d\n", compute(100));
+    return 0;
+}
+```
+]
+]
+]
+
+---
+
+# Le mot clé `inline`
+## Comment s'en convaicre ? 
+
+une solution, un peu artisanale, pour voir si une fonction a bien été inlinée est de regarder le code assembleur généré par le compilateur. (Soit en générant le .s via `gcc -S`, soit en utilisant un outil en ligne comme Godbolt).
+
+<iframe width="1000px" height="400px" src="https://godbolt.org/e?readOnly=true&hideEditorToolbars=true#z:OYLghAFBqd5QCxAYwPYBMCmBRdBLAF1QCcAaPECAMzwBtMA7AQwFtMQByARg9KtQYEAysib0QXACx8BBAKoBnTAAUAHpwAMvAFYTStJg1AB9U8lJL6yAngGVG6AMKpaAVxYM9DgDJ4GmADl3ACNMYhAAJmkAB1QFQlsGZzcPPVj4mwFffyCWUPCoi0wrTIYhAiZiAmT3Ty4iksTyyoJswJCwyOkFCqqa1Pqelrbc/K6ASgtUV2Jkdg4AegWAagJMHuM/Wj9MADpkAFINAEEDiIBmP2Q3LGWD88ce/FRdhHvsI9OToZtkZa2dv9BMtkK4eqgWMYmOh0BA/ARlkxSECEcFxp8DgB2ABCn2W%2BOWxEwBBmDERdwi2OWwXuuJOWIAIhiTvCQRDoq41nDgap0fScXiCayFHdzgzlhpaYL8fxiMtuQi8KLxZLzlSlfdHMtVLSKbjKXg%2BccCXcBScTSaRWdcWKQWCiJDobC8MjeVLzQTGdLCcTScsFO7TpimfSWcCWEw/BAAG6oPDoI1YunGgnRYjwqgQM4RM4AVnQB1zjgY2eRaBYHK5XA0GnG6LV3qJJOIZNVya9Jw4k1onFzvE8HC0pFQnC1Cmms0wFPOPFIBE0XcmAGsQOdc7sAJwaCIac4byR7gAch64XAi%2Bk4kn7C%2BHnF4ChAGjnC8mcFgSHL0ToYXIlE/3/CZBgC4XNzxoWg1mIB8IGCG9gj8SoAE9OFneDmGIRCAHlgm0TBrBQ3hyzYQRMIYWhkMHXgsGCVxgEcMRaAfbgqMwCMjHESjSHwIlrDwaN1hvTBVDwzl5lneFigI/Q8GCYgkOcLAbwIdMWCk/jiGCOJMAZVjDGAbYjBfPgDGABQADU8EwAB3TDokYKT%2BEEEQxHYKQZEERQVHUTjdHqAxDNMYxzG2YIH0gSZUGiUomIAWkwodUHU9MsDCiBJksPDSnsBgnBcWovBykYOnCep0gSAR%2BjqUgytKIq8k6QZikyppemqPKBgaZqBGaKo6rGQZWsqvQhl6nZRga9KJzmCRu17a9OJHDhtUPAA2GKVskZZgGQP4QN2CJ5VwQgSGnLhxl4edKLrUgV3Oc59o3Q9zhWo9VvOQ8NEPC8OCvUgBwSu8LEfZ8rtIN9EBQdkAN/CB/3oQDgNAvg6Eg6DYM4tCkKkzGMOw3D8OY0giMYAhSPIm9qNo%2BjaEYqSsDY/T5iHbjmv4pihyEkS1ikiSe04kK5IwhSmYulS1LCTSlB0hmDNAUGqBM8zLJsuyB1nRzhFEcQ3I1zy1BvXRz38kwzGk0L4AiqLElizCIl4RKwmSgTws63i7AgBwhurUgfDG4qQC%2BmrEi9p8g6yP36vCL6MrdspBvauonxj0oetaCOxmj%2BOUkTixWr6zpD0mmZprO76%2Bz%2Bm9FuWtaNq2nblj2g6ICOog5TOGdzpBrRrtujRdkxDcN1zDcVtzTEpA%2Br6%2Bd%2B/77cBh8n0u7vZo4O2K4WwGl8XUh1PiOxJCAA%3D%3D"></iframe>
+
+---
+
+# Le mot clé `inline`
+## Limitations et conseils
+
+- Le mot-clé `inline` est une suggestion au compilateur, qui peut choisir de ne pas l'appliquer.
+- L'utilisation excessive de fonctions `inline` peut augmenter la taille du code binaire (code bloat).
+- Il est préférable d'utiliser `inline` pour les fonctions petites et fréquemment appelées.
+- Les fonctions `inline` doivent être définies dans les fichiers d'en-tête pour être accessibles dans plusieurs fichiers source.
+
+Et attention, `inline` ne remplace pas de faire du profiling pour identifier les vrais goulots d'étranglement !
+
+---
+
+# Les macros en C
+## Introduction aux macros
+
+Les macros en `C` sont des directives de préprocesseur qui permettent de définir des constantes, des fonctions ou des blocs de code réutilisables. Elles sont définies à l'aide de la directive `#define` et sont remplacées par le préprocesseur avant la compilation du code source.
+
+```c
+#define PI 3.14159
+#define SQUARE(x) ((x) * (x))
+```
+
+
+---
+
+# Les macros en C
+## Avantages et inconvénients
+
+**Avantages :**
+- Réutilisabilité : les macros permettent de réutiliser du code sans duplication.
+- Flexibilité : elles peuvent être utilisées pour créer des fonctions génériques.
+- Performance : les macros peuvent éviter le surcoût d'un appel de fonction.
+
+**Inconvénients :**
+- Lisibilité : le code utilisant des macros peut être plus difficile à lire et à comprendre.
+- Débogage : les erreurs dans les macros peuvent être difficiles à tracer.
+- Portée : les macros n'ont pas de portée de variable, ce qui peut entraîner des conflits de noms.
+- Sécurité : les macros peuvent introduire des comportements inattendus si elles ne sont pas utilisées correctement.
+
+---
+
+# Les macros en C
+## Attention au piège !
+
+.smaller[
+.cols[
+  .fifty[
+```c
+#define SQUARE(x) x * x
+
+int main(){
+    int a = 5;
+    int result = SQUARE(a + 1); 
+    printf("Result: %d\n", result);
+    return 0;
+}
+```
+  ]
+  .fifty[
+**Sortie :**
+```shell
+$ ./a.out
+Result: 11
+```
+  ]
+]
+]
+
+Et oui c'est le drame !!! Ici, `SQUARE(a + 1)` est remplacé par `a + 1 * a + 1`, ce qui donne `5 + 1 * 5 + 1 = 11` au lieu de `36`. Car le préprocesseur ne comprend pas les priorités des opérations et comme son nom l'indique, il fait juste du traitement de texte en amont de la compilation.
+
+La solution est d'utiliser des parenthèses dans la définition de la macro :
+
+```c
+#define SQUARE(x) ((x) * (x))
+``` 
+
+---
+
+# Les macros en C
+## Macros avec des arguments multiples
+
+.smaller[
+```c
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+int main(){
+    int x = 10;
+    int y = 20;
+    int max_value = MAX(x, y);
+    printf("Max: %d\n", max_value);
+    return 0;
+}
+```
+]
+
+On peut également passer en "argument" des types, par exemple pour définir `STATIC_CAST` qui permet de faire des cast statiques  :
+
+```c
+#define STATIC_CAST(type, value) ((type)(value))
+
+int main(){
+    double d = 3.14;
+    int i = STATIC_CAST(int, d);
+    printf("i: %d\n", i);
+    return 0;
+}
+```
+
+---
+
+# Les macros en C
+## Macros avec des blocs de code 
+
+On peut également définir des macros qui contiennent des blocs de code. Pour cela, on utilise généralement la construction `do { ... } while (0)` pour s'assurer que la macro se comporte comme une instruction unique.
+
+Par exemple, une macro pour débuguer :
+
+```c
+#define TRACE(fmt, ...) do {                                \
+    fprintf(stderr, "[%s:%d] " fmt "\n",                   \
+            __FILE__, __LINE__, __VA_ARGS__);              \
+} while (0)
+```
+
+.cols[
+  .fifty[
+
+```c
+int main(){
+    int x = 42;
+    TRACE("La valeur de x est %d", x);
+    return 0;
+}
+```
+  ]
+  .fifty[
+**Sortie :**
+```shell
+$ ./a.out
+[main.c:10] La valeur de x est 42
+```
+  ]
+]
+
+
+---
+
+# Les macros en C
+## Macros conditionnelles
+
+Les macros conditionnelles permettent d'inclure ou d'exclure du code en fonction de certaines conditions. Cela est souvent utilisé pour gérer la portabilité entre différentes plateformes ou pour activer/désactiver des fonctionnalités de débogage.
+
+.cols[
+  .fifty[
+```c
+#if defined(Darwin)
+    // Code spécifique à macOS
+#else if defined(_WIN32)
+    // Code spécifique à Windows
+#else
+    // Code pour les autres plateformes
+#endif
+```
+  ]
+  .fifty[
+```c
+#ifdef DEBUG
+    #define LOG(msg) fprintf(stderr, "DEBUG: %s\n", msg)
+#else
+    #define LOG(msg) // Ne rien faire
+#endif
+```
+]
+]
+
+Pour compiler avec la macro `DEBUG` définie, on peut utiliser l'option `-DDEBUG` avec `gcc` :
+
+```bash
+gcc -DDEBUG -o mon_programme mon_programme.c
+```
+
+
+---
+
+# Les macros en C
+## Poussé à l'extrême
+
+.smaller[
+.cols[
+  .sixty[
+```c
+#define DEFINE_VECTOR(type, name)                                      \
+typedef struct {                                                       \
+    type *data;                                                        \
+    size_t size;                                                       \
+    size_t capacity;                                                   \
+} vector_##name;                                                       \
+                                                                       \
+static inline void vector_##name##_init(vector_##name *v) {            \
+    v->data = NULL;                                                    \
+    v->size = 0;                                                       \
+    v->capacity = 0;                                                   \
+}                                                                      \
+                                                                       \
+static inline void vector_##name##_push_back(vector_##name *v, type x) {\
+    if (v->size == v->capacity) {                                      \
+        v->capacity = v->capacity ? v->capacity * 2 : 4;              \
+        v->data = realloc(v->data, v->capacity * sizeof(type));       \
+    }                                                                  \
+    v->data[v->size++] = x;                                            \
+}                                                                      \
+                                                                       \
+static inline void vector_##name##_free(vector_##name *v) {             \
+    free(v->data);                                                     \
+    v->data = NULL;                                                    \
+    v->size = v->capacity = 0;                                         \
+}
+
+```
+  ]
+  .fourty[
+```c
+DEFINE_VECTOR(int, int)
+int main(){
+    vector_int vec;
+    vector_int_init(&vec);
+    for (int i = 0; i < 10; i++) {
+        vector_int_push_back(&vec, i);
+    }
+    for (size_t i = 0; i < vec.size; i++) {
+        printf("%d ", vec.data[i]);
+    }
+    printf("\n");
+    vector_int_free(&vec);
+    return 0;
+}
+```
+
+En `C++`, on utiliserait plutôt des templates pour ce genre de choses, mais en `C` les macros permettent d'atteindre un résultat similaire.
+]
+]
+]
+
+---
+
+# Les pointeurs de fonction 
+## Introduction aux pointeurs de fonction
+
+En `C`, un pointeur de fonction est une variable qui stocke l'adresse d'une fonction. Cela permet de passer des fonctions comme arguments à d'autres fonctions, de créer des tableaux de fonctions, et de définir des callbacks.
+
+---
+
+# Les pointeurs de fonction
+## Déclaration et utilisation
+
+Il faut d'abord déclarer un pointeur de fonction en spécifiant le type de retour et les types des paramètres de la fonction pointée. Par exemple, pour une fonction qui prend deux `int` en paramètres et retourne un `int` :
+
+```c
+typedef int (*FuncPtr)(int, int);
+```
+
+Cela nous donne donc accès à un nouveau type `FuncPtr` qui peut être utilisé pour déclarer des pointeurs de fonction. On peut ensuite assigner l'adresse d'une fonction à ce pointeur et l'utiliser pour appeler la fonction.
+
+.smaller[
+```c
+#include <stdio.h>
+int add(int a, int b) {
+    return a + b;
+}
+
+int main() {
+    FuncPtr func_ptr = add; // Assignation de l'adresse de la fonction
+    int result = func_ptr(5, 3);     // Appel de la fonction via le pointeur
+    printf("Result: %d\n", result);
+    return 0;
+}
+```
+]
+
+---
+
+# Les pointeurs de fonction
+## Tableaux de pointeurs de fonction
+
+On peut également créer des tableaux de pointeurs de fonction pour stocker plusieurs fonctions ayant la même signature. Cela est utile pour implémenter des tables de dispatch ou des callbacks.
+.smaller[
+.cols[
+  .sixty[
+```c
+#include <stdio.h>
+
+int add(int a, int b) {
+    return a + b;
+}
+
+int multiply(int a, int b) {
+    return a * b;
+}
+
+int main() {
+    FuncPtr operations[2] = {add, multiply}; // Tableau de pointeurs de fonction
+
+    int a = 5, b = 3;
+    for (int i = 0; i < 2; i++) {
+        int result = operations[i](a, b); // Appel de la fonction via le pointeur
+        printf("Result: %d\n", result);
+    }
+    return 0;
+}
+```
+]
+.fourty[
+vous pourriez utiliser ce genre de mécanisme pour faciliter l'implémentation de l'évaluateur d'expressions arithmétiques vu précédemment.
+]]]
+
+---
+
+# Les deux derniers types de base 
+## Le type `enum`
+
+En `C`, un `enum` (énumération) est un type de données défini par l'utilisateur qui permet de regrouper un ensemble de constantes entières sous un même nom. Chaque constante dans une énumération est associée à une valeur entière unique, généralement commençant à 0 et incrémentée de 1 pour chaque élément suivant, sauf si des valeurs spécifiques sont assignées.
+
+.smaller[
+```c
+#include <stdio.h>
+enum Color {
+    RED,    // 0
+    GREEN,  // 1
+    BLUE    // 2   
+};
+typedef enum Color Color;
+int main() {
+    Color my_color = GREEN;
+    if (my_color == GREEN) {
+        printf("La couleur est verte.\n");
+    }
+    return 0;
+}
+```
+]
+
+---
+
+# Les deux derniers types de base
+## Le type `union`
+
+En `C`, une `union` est un type de données défini par l'utilisateur qui permet de stocker différentes données dans le même espace mémoire. Contrairement aux structures (`struct`), où chaque membre a son propre espace mémoire, dans une union, tous les membres partagent le même espace mémoire. La taille de l'union est déterminée par la taille de son membre le plus grand.
+
+.smaller[
+.cols[
+  .fifty[
+```c
+#include <stdio.h>
+union Data {
+    int i;
+    float f;
+    char str[20];
+};
+typedef union Data Data;
+
+int main() {
+    Data data;
+
+    data.i = 10;
+    printf("data.i: %d\n", data.i);
+
+    data.f = 220.5;
+    printf("data.f: %.2f\n", data.f);
+
+    snprintf(data.str, sizeof(data.str), "Hello, World!");
+    printf("data.str: %s\n", data.str);
+
+    return 0;
+}
+```
+]
+.fifty[
+
+Attention cependant, comme tous les membres partagent le même espace mémoire, modifier un membre affecte les autres. Il est donc important de savoir quel membre est actuellement actif pour éviter des comportements inattendus. Une bonne pratique est d'utiliser une énumération pour suivre quel type de donnée est actuellement stocké dans l'union et d'encapsuler cela dans une structure.
+
+]
+]
+]
+
+---
+
+# Mise en pratique 
+
+
+---
+
+# Pour la prochaine séance
+
+Voici ci-dessous un projet en `C` qui implémente une "hash map" (table de hachage) simple. Une table de hachage est une structure de données qui permet de stocker des paires clé-valeur et d'accéder rapidement aux valeurs en utilisant leurs clés, donc l'équivalent d'un dictionnaire en Python.
+
+https://github.com/tidwall/hashmap.c/tree/master
+
+Votre travail pour la semaine prochaine est d'étudier ce code, l'utiliser dans un petit programme de test. Vous devez étudier le code source, idéalement le comprendre, et préparer une question/remarque chacun.e. sur le code. 
+
+---
 
 # Programme des séances
 
