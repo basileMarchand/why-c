@@ -3352,6 +3352,70 @@ int main() {
 
 ---
 
+# Les deux derniers types de base 
+## Limitation des enums de base 
+
+Considérons par exemple un enum qui nous permette de spéficier les outputs d'un programme. 
+.cols[
+  .fifty[
+```c
+enum OutputMode{
+  OUTPUT_NONE,
+  OUTPUT_TEXT,
+  OUTPUT_BINARY,
+  OUTPUT_SCREEN
+};
+``` 
+  ]
+.fifty[
+On ne peut facilement dans ce cas spécifier une sortie binaire + écran par exemple. 
+]
+]
+
+La seule solution serait alors de définir un nouveau champ dans le enum. Ce qui n'est pas super maintenable et évolutif. 
+
+---
+ 
+# Les deux derniers types de bases 
+## Un usage un peu particulier des enum -> les flags 
+
+Heureusement le `C` a pensé à tout. Il est possible de spéficier les valeurs et d'utiliser le décalage de bit. 
+
+.cols[
+  .fifty[
+```c
+typedef enum {
+    OUTPUT_NONE   = 0,
+    OUTPUT_TEXT   = 1 << 0,
+    OUTPUT_BINARY = 1 << 1,
+    OUTPUT_SCREEN = 1 << 2
+} OutputModes;
+```
+  ]
+  .fifty[
+De cette manière les valeurs valents respectivement 0, 1, 2, 4. Et surtout on peut créer une valeur comme la combinaison de plusieurs flags. 
+  ]
+]
+
+.smaller[
+```c
+OutputModes o = OUTPUT_TEXT | OUTPUT_SCREEN;
+print(o);
+o = o ^ OUTPUT_TEXT;
+print(o)
+if (o & OUTPUT_SCREEN)
+{
+    printf("Screen output required\n");
+}
+if (!(o & OUTPUT_BINARY))
+{
+    printf("La sortie binairie n'est pas requise");
+}
+```
+]
+
+---
+
 # Les deux derniers types de base
 ## Le type `union`
 
@@ -3397,6 +3461,39 @@ Attention cependant, comme tous les membres partagent le même espace mémoire, 
 
 # Mise en pratique 
 
+On va travailler sur la mise en place d'un mécanisme de pipeline de traitement de données simple. 
+
+**Step 1** : Pour commencer vous devez implémenter 
+
+```c
+
+typedef struct {} Data;
+
+Data abs_value(Data input){}
+```
+
+La difficulté est que dans Data je veux pouvoir gérer des scalair (valeur unique) ainsi que des tableau unidimensionnel. Et donc la fonction `abs_value` devra adapter son comportement suivant le type de données dans `input`. 
+
+---
+
+**Step 2** : définir une fonction `threashold` qui prend toujours un `Data input`en entrée mais maintenant ne fonctionne que sur des tableaux. Vous allez vite voir qu'il faut ce coup si passer un argument en plus, qui sera un `struct` contenant les paramètres du seuillage. 
+
+```c
+typedef struct { ... } ThreasholdParameters;
+
+Data threashold(Data input, ThreasholdParameters parameters){}
+```
+
+**Step 3** : définir une interface unifiée pour toutes les fonctions du pipeline. 
+
+```c
+Data do_something(Data intput, void* parameters){}
+``` 
+
+**Step 4** : une fois l'API unifiée, définir un catalogue d'opération dans lequel on peu piocher le bon pointeur de fonction via un nom. 
+
+**Step 5** : faire un pipeline linéaire "automatique" chainant différentes opérations. 
+
 
 ---
 
@@ -3407,6 +3504,8 @@ Voici ci-dessous un projet en `C` qui implémente une "hash map" (table de hacha
 https://github.com/tidwall/hashmap.c/tree/master
 
 Votre travail pour la semaine prochaine est d'étudier ce code, l'utiliser dans un petit programme de test. Vous devez étudier le code source, idéalement le comprendre, et préparer une question/remarque chacun.e. sur le code. 
+
+Vous devez noter votre question/remarque [ici](https://docs.google.com/spreadsheets/d/1sdzgKsGwuicmW--fQvAGDa9jjUOhkhQA1I6qlnesdJk/edit?usp=sharing)
 
 ---
 
