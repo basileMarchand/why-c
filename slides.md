@@ -37,8 +37,9 @@ layout: true
 
 <div class="slide_footer">
     <div class="wrap">
-        <span>2025 - <i> Introduction au C ? ✨ </i>  </span>
+        <span>2025 - <i> Introduction au C ? ✨ </i>  </span> <span id="footerlinks"> Goto Séance <a href="#2">1</a>/<a href="#56">2</a>/<a href="#79">3</a>/<a href="#93">4</a>/<a href="#114">5</a>/<a href="#138">6</a> </span>
     </div>
+    <a >
 </div>
 
 <div class="linkedin-footer">
@@ -49,6 +50,17 @@ layout: true
 </div>
 
 <div class="slide-decor"></div>
+
+
+
+---
+
+class: center, middle
+
+# Séance 1
+
+## Les bases du langage
+
 
 ---
 
@@ -3506,6 +3518,232 @@ https://github.com/tidwall/hashmap.c/tree/master
 Votre travail pour la semaine prochaine est d'étudier ce code, l'utiliser dans un petit programme de test. Vous devez étudier le code source, idéalement le comprendre, et préparer une question/remarque chacun.e. sur le code. 
 
 Vous devez noter votre question/remarque [ici](https://docs.google.com/spreadsheets/d/1sdzgKsGwuicmW--fQvAGDa9jjUOhkhQA1I6qlnesdJk/edit?usp=sharing)
+
+---
+
+class: middle, center
+
+# Séance 6 
+
+## Utilisation de librairies externes
+
+<a href="seance6"></a>
+
+---
+
+# Librairies externes 
+
+Pour le moment nous avons vu comment développer tout ce dont on a besoin depuis **zéro** en `C`. Cela fonctionne et est formatteur pour des petits projets, mais on arrive vite à une taille critique où devoir réinventer la roue à chaque fois devient contre-productif. 
+Heureusement pour nous il existe les librairies dont le principe est de pouvoir réutiliser des briques logiciels, que l'on a pas développées, dans nos projets. 
+
+--
+
+Des librairies il en existe pour tout et n'importe quoi 
+
+- Interfaces graphiques 
+- Algèbre linéaire 
+- Calcul scientifique 
+- Jeux vidéos 
+- Traitement d'image 
+- etc ... 
+
+---
+
+# Librairies externes 
+## Deux grandes familles
+
+Lorsqu’on utilise une bibliothèque externe, il existe deux grands modèles :
+
+
+.cols[
+  .fifty[
+
+### Bibliothèques propriétaires
+- code source fermé
+- licence payante ou restrictive
+- support assuré par un éditeur
+- usage soumis à des conditions contractuelles
+  ]
+  .fifty[
+### Bibliothèques open source
+- code source accessible
+- licence libre
+- développement public
+- maintenance communautaire ou institutionnelle
+  ]
+]
+
+--
+
+.cols[
+  .sixty[
+Une bibliothèque open source :
+- peut être **lue**, **auditée** et **comprise**
+- peut être **utilisée**, **modifiée** et **redistribuée** (selon la licence)
+- évolue publiquement
+- repose sur des standards ouverts
+
+  ]
+  .fourty[
+⚠️ Open source ≠ absence de règles  
+Les licences définissent précisément les droits et obligations.
+
+  ]
+]
+
+
+---
+
+# Librairies externes 
+## Installations 
+
+Alors là, ca ne va pas spécialement vous plaire. Contrairement à Python, qui a l'utilitaire `pip` (entre autres) pour gérer les dépendances, le `C` est un peu plus la jungle. Il n'y a pas de gestionnaire de dépendance officiel en `C`, ni en `C++` d'ailleurs. 
+
+.center[Il existe différentes solutions, chacunes avec ses avantages et inconvénients.]
+
+- Gestionnaires de paquets génériques des OS : 
+  - `apt` sur debian/ubuntu 
+  - `dnf`sur fedora/red hat 
+  - `brew` sur macos 
+- Gestionnaires de paquets spécifiques C/C++ 
+  - `conan`
+  - `vcpkg`
+  - `spack` 
+
+.center[La grosse difficulté c'est généralement de gérer l'arbre de dépendances]
+
+---
+
+# Librairies externes 
+## Exemple fil rouge 
+
+Pour cette séance, nous allons considérer un exemple fil rouge qui est l'utilisation de la [GSL](https://www.gnu.org/software/gsl/doc/html/index.html). Le librairie GSL pour (GNU Scientific Library) est une librairie C qui fournie tout un ensemble de fonctionnalité autour du calcul scientifique en `C`. 
+
+
+.cols[
+  .fifty[
+```shell 
+$ sudo apt install libgsl-dev
+```
+  ]
+  .fifty[
+```shell
+$ brew install gsl 
+```
+  ]
+]
+
+**Attention** sous Linux on trouve très généralement les paquets `libXXX` et `libXXX-dev` si vous voulez développer des choses vous devez toujours utiliser la librairie `-dev` car elle seule contient les headers files. 
+
+
+Après installation, sous Linux vous devez avoir : *
+- le dossier des headers `/usr/include/gsl`
+- les fichiers `/usr/lib/x86_64-linux-gnu/{libgsl.so, libgslcblas.so}`
+
+
+---
+
+# Librairies externes
+## Notion d'**API**
+
+L'utilisation de libairires externe fait apparaitre le besoin d'une API. 
+
+.center[Application Programming Interface]
+
+L'API c'est la porte d'entrée de la librairie. Pour utiliser une librairie on a pas envie de devoir savoir comment elle fonctionne en interne. C'est là où une API bien faite est importante car c'est notre point d'entrée. 
+
+
+Une API C repose sur quelques principes simples :
+
+- Structures opaques
+- Allocation explicite
+- Libération explicite
+- Passage de pointeurs
+- Gestion manuelle des erreurs
+
+👉 Rien n’est caché.
+
+
+---
+
+# GSL 
+## Premier exemple de base 
+
+.cols[
+  .sixty[
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <gsl/gsl_vector.h>
+
+int main()
+{
+
+    gsl_vector *v = gsl_vector_alloc(3);
+
+    gsl_vector_set(v, 0, 1.0);
+    gsl_vector_set(v, 1, 2.0);
+    gsl_vector_set(v, 2, 3.0);
+
+    for (size_t i = 0; i < 3; i++)
+    {
+        printf("v[%zu] = %g\n", i, gsl_vector_get(v, i));
+    }
+    gsl_vector_free(v);
+    return EXIT_SUCCESS;
+}
+```
+  ]
+  .fourty[
+    A la compilation il faut faire deux choses particulières : 
+
+    1. Dire où se trouve les headers de la GSL 
+    2. Lier le programme à la librairie GSL. 
+
+Sous Linux, une solution pour déterminer les options de compilation à passer est d'utiliser `pkg-config`
+
+```shell
+$ pkg-config --cflags --libs gsl
+-lgsl -lgslcblas -lm 
+```
+
+  ]
+]
+
+
+---
+
+# Mise en pratique 
+## Système de N-ressorts 
+
+**Objectif** : Déterminer le déplacement de $n$ ressorts en série sous l'effet d'une force.
+
+**L'exercice** : 
+Construisez la matrice de raideur globale $K$ par assemblage de matrices élémentaires, puis résolvez le système $Ku = f$ pour trouver les déplacements $u$.
+
+💡 **Les Hints** :
+- L'assemblage : Pensez bien à l'indice des nœuds. Un ressort $i$ relie les nœuds $i$ et $i+1$. Sa contribution doit être ajoutée (et non remplacée) dans la matrice globale.
+- Conditions aux limites : Le premier nœud est fixe ($u_0 = 0$). Pour "bloquer" ce nœud dans votre système, une astuce simple consiste à imposer en 0,0 un gros terme 1.e20. 
+- Résolution : Utilisez gsl_linalg_LU_solve. Attention, cette fonction modifie souvent la matrice d'origine !
+
+---
+
+# Mise en pratique 
+## Intégrateur RK4 sur Lotka-Volterra 
+
+**Objectif** : Simuler l'évolution de deux populations sur le temps long.
+
+**L'exercice** : Implémentez le schéma de Runge-Kutta 4 (RK4) pour résoudre le système différentiel de Lotka-Volterra.
+
+**💡 Les Hints** :
+- RK4 "à la main" : L'usage des intégrateurs automatiques de la GSL est interdit ici. Vous devez coder les 4 étapes ($k_1, k_2, k_3, k_4$) en utilisant les fonctions de manipulation de vecteurs gsl_vector.
+- Optimisation mémoire : C'est le point critique. Interdiction totale d'allouer ou de libérer de la mémoire dans votre boucle temporelle. Créez vos vecteurs de travail avant la boucle et réutilisez-les.
+- Modularité : Séparez bien la fonction qui calcule les dérivées (le modèle) de la fonction qui calcule un pas de temps (l'algorithme).
+
+
+
+
+
 
 ---
 

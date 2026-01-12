@@ -322,3 +322,14 @@ th {
 .cols table {
   font-size: 18px;
 }
+
+span#footerlinks {
+  margin-left: 10em;
+  color: #eb5757;
+}
+
+span#footerlinks a {
+  text-decoration: none;
+  color: #eb5757;
+
+}
