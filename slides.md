@@ -37,7 +37,7 @@ layout: true
 
 <div class="slide_footer">
     <div class="wrap">
-        <span>2025 - <i> Introduction au C ? ✨ </i>  </span> <span id="footerlinks"> Goto Séance <a href="#2">1</a>/<a href="#56">2</a>/<a href="#79">3</a>/<a href="#93">4</a>/<a href="#114">5</a>/<a href="#138">6</a> </span>
+        <span>2025 - <i> Introduction au C ? ✨ </i>  </span> <span id="footerlinks"> Goto Séance <a href="#2">1</a>/<a href="#56">2</a>/<a href="#79">3</a>/<a href="#93">4</a>/<a href="#114">5</a>/<a href="#138">6</a>/<a href="#149">7</a> </span>
     </div>
     <a >
 </div>
@@ -3742,73 +3742,276 @@ Construisez la matrice de raideur globale $K$ par assemblage de matrices éléme
 
 
 
+---
 
+class: middle, center
+
+# Séance 7
+
+## Tester et debugger 
+
+<a href="seance7"></a>
 
 
 ---
 
-# Programme des séances
+# Tester 
+## Tester c'est douter 
+
+Un adage classique en programmation est de dire que 
+
+.center[Tester c'est douter]
+
+Je dirais personnellement que le doute est une chose saine !! 
+
+Plus sérieusement, pour du code un tout petit peu sérieux il est indispensable de mettre en place une base de test unitaire. 
+
+- Une fonction C = une boîte noire
+
+- Un test =
+
+  - des entrées connues
+  - un résultat attendu
+  - une assertion
+
+
+---
+
+# Tester 
+## Sans framework 
+
+Pour faire une base de test simple, une solution artisanale consiste à utiliser des assert. 
 
 .cols[
+  .sixty[
+```c
+#include <assert.h>
+#include <math.h>
 
-.fifty[
+double norm2(double x, double y) {
+    return sqrt(x*x + y*y);
+}
 
-- Séance 1 : 28/10
+void test_norm2() {
+    assert(fabs(norm2(3.0, 4.0) - 5.0) < 1e-12);
+    assert(norm2(0.0, 0.0) == 0.0);
+}
 
-  - Toute la base du C,
-  - variables, types,
-  - branchements, boucles,
-  - fonctions
+int main(void) {
+    test_norm2();
+    return 0;
+}
+```
+  ]
+  .fourty[
+L'intérêt du assert est qu'n cas d'erreur 
+- on saura quelle assertion échoue 
+- le programme interrompra son exécution
 
-- Séance 2 : 04/11
-
-  - Types dérivés : tableaux, struct, pointeurs
-  - Coding style et clean code
-
-- Séance 3 : 09/12
-
-  - LA mémoire
-
-- Séance 4 : 16/12
-
-  - La librairie standard C
-
-]
-.fifty[
-
-- Séance 5 : 06/01
-
-  - Astuces avancées : préprocesseur, macro
-  - Industrialisation : chaînes de compilation
-
-- Séance 6 : 13/01
-
-  - Utilisation de librairies externes
-  - GNU Scientific Library
-  - SDL
-
-- Séance 7 : 20/01
-
-  - Tests unitaire
-  - Profiling de code
-
-- Séance 8 : 21/01
-
-  - Gestion des erreurs
-
-- Séance 9 : 27/01
-
-  - Projet
-    ]
-
+  ]
 ]
 
-<div style="position: absolute; top: 53%; left: 31%;opacity: 0.2">
-<iframe src="https://giphy.com/embed/okFG5aJWqRGMYXoKTD" width="280" height="280" style="" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
-</div>
+---
 
-<div style="position: absolute; top:50%; left:75%; opacity: 0.2">
-<iframe src="https://giphy.com/embed/GghGKaZ8JeHJx0apQC" width="280" height="280" style="" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
-</div>
+# Tester 
+## Framework plus lourd 
+
+Il existe plein de framework pour mettre en place des tests unitaires 
+
+| Framework | Dépendances | Simplicité | Mocks | Industrie |
+| --------- | ----------- | ---------- | ----- | --------- |
+| assert.h  | aucune      | ⭐⭐⭐⭐⭐      | ❌     | ⚠️        |
+| Unity     | très faible | ⭐⭐⭐⭐       | ⚠️    | ⭐⭐        |
+| cmocka    | faible      | ⭐⭐⭐        | ✅     | ⭐⭐⭐⭐      |
+| Check     | moyenne     | ⭐⭐         | ⚠️    | ⭐⭐⭐       |
+| Criterion | élevée      | ⭐⭐         | ✅     | ⭐⭐⭐⭐      |
+
+Inutile de se prendre trop la tête avec ça pour le moment. Pour vos besoins, `assert` fait parfaitement le job ;)
+
+---
+# Tester 
+## Bonnes pratiques 
+
+Pour que les tests soient efficace il faut : 
+
+- Tester les cas limites
+
+- Tester les erreurs
+
+- Tester avant d’optimiser
+
+- Ne pas tester printf, tester les valeurs
+
+---
+
+# Debug
+## `printf` n'est pas une solution 
+
+Pour debuger un programme, faire des printf dans tous les sens n'est pas une solution viable. 
+
+La seule solution que vous devez envisager est d'utiliser un debuggeur ! 
+
+- GDB sous Linux 
+- LLDB sous MacOS
+
+Le debuggeur est un programme externe, qui va s'occuper de gérer l'exécution de votre programme et vous permettre de l'inspecter pendant son exécution. Afin de permettre au debuggeur d'avoir la main sur votre exécutable il est nécessaire lors de sa compilation que vous activiez une option 
+
+```shell
+$ gcc -g -O0  main.c
+```
+
+Cela va générer un binaire **plus lent** mais debugable ! 
+
+---
+
+# Debug 
+## Les commandes à connaitre 
+
+```bash
+gdb ./a.out
+run                   #-> Lance l'exécution du programme 
+print x               #-> Affiche la variable x 
+break fichier.c:YY    #-> Met un breakpoint ligne YY de fichier.c 
+break functionName    #-> Met un breakpoint à l'entrée de functionName
+next                  #-> Passe à la ligne suivant 
+step                  #-> Rentre dans la ligne
+where                 #-> Situe la position courante dans le flux d'exécution 
+```
+
+---
+
+# Debug 
+## Trouver les fuites mémoires 
+
+GDB/LLDB permettent de trouver les segfault et identifier les comportements non-désirés dans les programmes. Il reste cependant un type de "bug" à gérer, les **fuites mémoires**. 
+
+Pour rappel, une fuite mémoire correspond à une mauvaise gestion de la mémoire. Concrètement c'est un `malloc` auquel aucun `free` n'est associé. En pratique ce n'est pas critique, jusqu'au moment où votre RAM explose 💣. 
+
+Il est donc indispensable d'intégrer dans le process de développement des outils de contrôle. Notamment un outil de détection de fuites mémoire est `AddressSanitizer` qui est intégré dans les compilateurs moderne. Le principe est que cela va instrumenter votre code et ainsi permettre de détecter toutes corruption ou mauvais usage de la mémoire. 
+
+**Attention**, comme pour le mode debug cela génère des exécutables plus lent !
+
+---
+
+# Debug 
+## AddressSanitizer 
+
+Pour activer l'adresse sanitizer il suffit de mettre l'option de compilation comme ci-dessous 
+
+```bash 
+$ gcc main.c -fsanitize=address 
+```
+.smaller[
+.cols[
+  .fifty[
+```c
+#include <stdlib.h>
+
+void foo()
+{
+    int *leak = (int *)malloc(sizeof(int) * 10);
+    if (leak == NULL)
+    {
+        return;
+    }
+    leak[0] = 42;
+}
+
+int main(void)
+{
+    foo();
+    return 0;
+}
+```
+  ]
+  .fifty[
+```bash
+$ gcc -fsanitize=address main.c
+$ ./a.out 
+=================================================================
+==798903==ERROR: LeakSanitizer: detected memory leaks
+
+Direct leak of 40 byte(s) in 1 object(s) allocated from:
+    #0 0x750f17afd9c7 in malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:69
+*   #1 0x5fac2b8201be in foo /home/bmarchand/enseignements/mines_cic/layout/demo_asan.c:5
+*   #2 0x5fac2b820221 in main /home/bmarchand/enseignements/mines_cic/layout/demo_asan.c:15
+    #3 0x750f1762a1c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #4 0x750f1762a28a in __libc_start_main_impl ../csu/libc-start.c:360
+    #5 0x5fac2b8200e4 in _start (/home/bmarchand/enseignements/mines_cic/layout/a.out+0x10e4) (BuildId: 092613a6f076ba975d98a8ca291603b266a5abbe)
+
+SUMMARY: AddressSanitizer: 40 byte(s) leaked in 1 allocation(s).
+```
+  ]
+]
+]
+
+---
+
+# Optimisation 
+## Trouver les hot spots 
+
+Pour finir, quand on a un programme qui fonctionne et sans fuite mémoire, on peut chercher à optimiser les choses. Pour cela, pas de magie, il faut identifier les parties qui prennent du temps dans le code. Pour cela il existe plein d'outils de profiling. Un outil simple est d'activer l'option `-pg` à la compilation. 
+
+.smaller[
+.cols[
+  .fifty[
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+double heavy_compute(int n){
+    double s = 0.0;
+    for (int i = 0; i < n; ++i){
+      for (int j = 0; j < n; ++j){
+          s += (i * 0.5) / (j + 1.0);
+      }
+    }
+    return s;
+}
+void process(int n, int repeat){
+    double result = 0.0;
+    for (int i = 0; i < repeat; ++i){
+      result += heavy_compute(n);
+    }
+}
+int main(void)
+{
+    process(800, 10);
+    return 0;
+}
+```    
+  ]
+  .fifty[
+```bash 
+$ gcc -pg demo_perf.c   
+$ ./a.out 
+$ gprof ./a.out gmon.out 
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+100.00      0.04     0.04       10     4.00     4.00  heavy_compute
+  0.00      0.04     0.00        1     0.00    40.00  process
+```
+  ]
+]
+]
+
+
+---
+
+# Mise en pratique 
+
+Tout est là 
+
+.center[https://github.com/ue12-p25/c-debug-optim]
+
+.center[
+
+<iframe src="https://giphy.com/embed/lY1F6BJjbRO3m" width="480" height="331" style="" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+]
+
 
 ---
