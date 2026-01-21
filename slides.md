@@ -4013,5 +4013,10 @@ Tout est là
 <iframe src="https://giphy.com/embed/lY1F6BJjbRO3m" width="480" height="331" style="" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
 ]
 
+---
+
+class: center, middle 
+
+[https://github.com/ue12-p25/c-space-invaders-starter](https://github.com/ue12-p25/c-space-invaders-starter)
 
 ---
